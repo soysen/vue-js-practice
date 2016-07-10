@@ -5,7 +5,10 @@
     </ul>
   </div>
   <div class="column six">
-    
+    <blockquote>
+      <h5 class="header">My Github</h5>
+      <a href="https://github.com/soysen/vue-js-practice/" target="_blank">https://github.com/soysen/vue-js-practice/</a>
+    </blockquote>
   </div>
 </template>
 

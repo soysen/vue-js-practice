@@ -20740,7 +20740,7 @@ exports.default = {
   }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"column six\">\n  <ul class=\"list tree\" v-if=\"tree.length\">\n    <child v-for=\"item in tree\" :item=\"item\"></child>\n  </ul>\n</div>\n<div class=\"column six\">\n  \n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"column six\">\n  <ul class=\"list tree\" v-if=\"tree.length\">\n    <child v-for=\"item in tree\" :item=\"item\"></child>\n  </ul>\n</div>\n<div class=\"column six\">\n  <blockquote>\n    <h5 class=\"header\">My Github</h5>\n    <a href=\"https://github.com/soysen/vue-js-practice/\" target=\"_blank\">https://github.com/soysen/vue-js-practice/</a>\n  </blockquote>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)

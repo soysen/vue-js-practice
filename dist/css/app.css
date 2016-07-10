@@ -2556,6 +2556,12 @@ pre {
   overflow-x: auto;
   max-height: 300px; }
 
+blockquote {
+  color: #4F726C;
+  padding: 20px;
+  background: #f3f3f3;
+  border-radius: 20px; }
+
 section.container {
   padding-bottom: 30px; }
 
@@ -2696,8 +2702,12 @@ h6 {
   font-size: 0.8rem; }
 
 .header {
-  font-size: 1.5rem;
   margin: 20px 0; }
+
+h4.header,
+h5.header,
+h6.header {
+  margin: 10px 0; }
 
 .list.inline .item {
   display: inline-block;
