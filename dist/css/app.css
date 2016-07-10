@@ -2724,8 +2724,8 @@ h6.header {
 .list.tree > .item .title {
   color: #787878;
   display: block;
-  height: 36px;
-  line-height: 36px;
+  height: 40px;
+  line-height: 40px;
   font-weight: 100;
   cursor: default;
   border-bottom: 1px solid #f3f3f3; }

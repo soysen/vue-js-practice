@@ -22,16 +22,16 @@
     {
       name: "vue-js",
       child: [{
-        name: "dist",
+        name: "dist/",
         child: [
           { 
-            name: "css", 
+            name: "css/", 
             child: [
               { name: "app.css",type: 'file', child: [] }
             ] 
           },
-          { name: "fonts", child: [] },
-          { name: "js", 
+          { name: "fonts/", child: [] },
+          { name: "js/", 
             child: [
               { name: "app.js",type: 'file', child: [] },
               { name: "rainbow.min.js",type: 'file', child: [] }
@@ -46,10 +46,10 @@
         name: "src/",
         child: [
           { 
-            name: "js",
+            name: "js/",
             child: [
               { 
-                name: "components", 
+                name: "components/", 
                 child: [
                   { name: "App.vue", type:'file' , child: [] },
                   { name: "Child.vue", type:'file' , child: [] },
@@ -61,16 +61,16 @@
               { name: "app.js", type:'file' , child: [] }
             ]
           }, { 
-            name: "sass",
+            name: "sass/",
             child: [
               { 
-                name: "components", 
+                name: "components/", 
                 child: [
                   { name: "tab.sass", type:'file' , child: [] }
                 ] 
               },
               { 
-                name: "elements", 
+                name: "elements/", 
                 child: [
                   { name: "form.sass", type:'file' , child: [] },
                   { name: "header.sass", type:'file' , child: [] },
@@ -78,7 +78,7 @@
                 ] 
               },
               { 
-                name: "globals", 
+                name: "globals/", 
                 child: [
                   { name: "global.sass", type:'file' , child: [] },
                   { name: "grid.sass", type:'file' , child: [] },
