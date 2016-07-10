@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
 	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>Vue.JS </title>
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="./css/app.css">
+    <script src="./js/rainbow.min.js"></script>
 </head>
 <body>
     <header>
@@ -14,13 +17,31 @@
     <main>
         <section id="app" class="container">
             <h3 class="header">傳值與連動</h3>
-            <app></app>
+            <div class="row">
+                <app></app>
+            </div>
             <hr>
         </section>
-        <section id="element" class="container">
-        	<ul>
-        		<my-component></my-component>
-        	</ul>
+        <section class="container">
+            <h3 class="header">列表</h3>
+            <div class="row">
+                <div id="list" class="inline list">
+                    <list></list>
+                </div>
+            </div>
+            <hr>
+        </section>
+        <section id="tree" class="container">
+            <h3 class="header">樹狀結構</h3>
+            <div class="row">
+                <tree></tree>
+            </div>
+        </section>
+        <section class="container">
+            <h3 class="header">專案結構</h3>
+            <div id="project" class="row">
+                <project></project>
+            </div>
         </section>
     </main>
     <footer>

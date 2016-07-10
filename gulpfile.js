@@ -20,6 +20,8 @@ elixir.extend('vue', function() {
 elixir(function(mix) {
 
 	mix
+    .copy('./node_modules/font-awesome/fonts','./dist/fonts')
+    .copy('./node_modules/rainbow-code/dist/rainbow.min.js','./dist/js/rainbow.min.js')
     .sass([
         'style.sass'
     ])

@@ -1,131 +1,20 @@
 @import url(http://fonts.googleapis.com/earlyaccess/cwtexhei.css)
 
-$main-color: #4F726C
-$focus-color: #405B55
-$darken-gray: #787878
-$main-gray: #91989f
-$border-gray: #BDC0BA
-$lighten-gray: #f3f3f3
+@import "./node_modules/font-awesome/scss/font-awesome.scss"
 
-html, 
-body 
-	margin: 0
-	padding: 0
-	background: $main-color
+@import "./node_modules/rainbow-code/themes/sass/_base"
+@import "./node_modules/rainbow-code/themes/sass/github"
 
-html
-	height: 100%
+@import "./node_modules/bourbon-neat/app/assets/stylesheets/_neat.scss"
 
-body 
-	font-family: 'cwTeXHei', sans-serif
-	min-height: 100%
-	display: -webkit-box
-	display: -webkit-flex
-	display: -ms-flexbox
-	display: flex
-	-webkit-box-orient: vertical
-	-webkit-box-direction: normal
-	-webkit-flex-direction: column
-	-ms-flex-direction: column
-	flex-direction: column
+@import "globals/variables"
+@import "globals/global"
+@import "globals/grid"
 
-main
-	-webkit-box-flex: 1
-	-webkit-flex: 1 0 auto
-	-ms-flex: 1 0 auto
-	flex: 1 0 auto
-	width: 100%
-	background: #fff
-	box-shadow: 0px 0px 10px rgba(0,0,0, .4)
+@import "elements/header"
+@import "elements/list"
+@import "elements/form"
 
-header 
-	color: #FFF
-	background: $main-color
-	
-footer 
-	color: #FFF
-	font-size: 0.8rem
-	padding: 15px 0
-	background: $main-color
+@import "components/tab"
 
-a, a:link
-	color: $main-color
-	text-decoration: none
-	&:hover,
-	&:focus
-		color: $focus-color
-
-hr
-	border: 0
-	margin: 20px 0
-	border-top: 1px solid $lighten-gray
-
-ul, ol 
-	margin: 0
-	padding: 0
-	list-style: none
-
-.container 
-	width: 100%
-	margin: auto
-	max-width: 1170px
-	padding: 0 1rem
-
-.aligned
-	&.center
-		text-align: center !important
-	&.left
-		text-align: left !important
-	&.right
-		text-align: right !important
-
-.floated
-	&.left
-		float: left !important
-	&.right
-		float: right !important
-
-h1, h2, h3, h4, h5, h6
-	font-weight: thin
-
-h1 
-	font-size: 2rem
-h2 
-	font-size: 1.7rem
-h3 
-	font-size: 1.4rem
-h4 
-	font-size: 1.2rem
-h5 
-	font-size: 1rem
-h6 
-	font-size: 0.8rem
-
-.header 
-	font-size: 1.5rem
-	margin: 20px 0
-
-input 
-	padding: 10px 15px
-	border: 1px solid $border-gray
-	border-radius: 5px
-	font-size: 1rem
-	display: inline-block
-
-	&:focus
-		outline: 0
-		border-color: $focus-color
-section
-	padding: 20px 0
-
-.field
-	margin: 10px 0 
-	vertical-align: middle
-	label
-		display: inline-block
-		color: $main-gray
-		font-size: .9rem
-		text-align: right
-		white-space: nowrap
-		margin-right: 10px
 

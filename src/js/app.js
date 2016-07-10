@@ -1,27 +1,44 @@
+var $ = require("jquery");
 var Vue = require("vue");
+
+// Components
 var App = require("./components/App.vue");
+var List = require("./components/List.vue");
+var Tree = require("./components/Tree.vue");
+var Project = require("./components/Project.vue");
 
 new Vue({
-  el: '#app',
-  components: {
-  	App
-  }
+	el: '#app',
+	components: {
+		App
+	}
 });
 
-var MyComponent = Vue.extend({
-	methods: {
-		deleteItem: function(t) {
-			event.preventDefault();
-			event.target.parentElement.remove();
-			// this.items.$remove(item);
-		}
-	},
-	template: '<li v-for="n in 100">{{ (n+1)+""+(n+1)+""+(n+1) }} <a href="#" v-on:click="deleteItem(this)">&times;</a></li>'
+new Vue({
+	el: '#list',
+	components: {
+		List
+	}
+});
+
+new Vue({
+	el: '#tree',
+	components: {
+		Tree
+	}
+});
+
+new Vue({
+	el: '#project',
+	name: 'project',
+	components: {
+		Project
+	}
+});
+// bind click event
+$("div.tab.menu > a.item").on("click", function(e){
+	e.preventDefault();
+	var id = this.attributes.href.value;
+	$(this).addClass("active").siblings().removeClass("active")
+	$(id).addClass("active").siblings().removeClass("active");
 })
-
-// Globally register the component with tag: my-component
-Vue.component('my-component', MyComponent);
-
-new Vue({
-  el: '#element'
-});

@@ -1,0 +1,42 @@
+
+section.container
+	padding-bottom: 30px 
+
+.container
+	padding: 0 15px
+	+outer-container
+
+.column
+	&.one
+		+span-columns(1)
+	&.two
+		+span-columns(2)
+	&.three
+		+span-columns(3)
+	&.four
+		+span-columns(4)
+	&.five
+		+span-columns(5)
+	&.six
+		+span-columns(6)
+	&.seven
+		+span-columns(7)
+	&.eight
+		+span-columns(8)
+	&.nine
+		+span-columns(9)
+	&.ten
+		+span-columns(10)
+	&.eleven
+		+span-columns(11)
+	&.twelve
+		+span-columns(12)
+
+@media screen and (max-width: 640px)
+		
+	.column
+		&.one, &.two, &.three, &.four, &.five, &.six,
+		&.seven, &.eight, &.nine, &.ten &.eleven, &.twelve
+			+span-columns(12)
+
+	
