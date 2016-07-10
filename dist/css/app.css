@@ -1,0 +1,123 @@
+@import url(http://fonts.googleapis.com/earlyaccess/cwtexhei.css);
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #4F726C; }
+
+html {
+  height: 100%; }
+
+body {
+  font-family: 'cwTeXHei', sans-serif;
+  min-height: 100%;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column; }
+
+main {
+  -webkit-box-flex: 1;
+  flex: 1 0 auto;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4); }
+
+header {
+  color: #FFF;
+  background: #4F726C; }
+
+footer {
+  color: #FFF;
+  font-size: 0.8rem;
+  padding: 15px 0;
+  background: #4F726C; }
+
+a, a:link {
+  color: #4F726C;
+  text-decoration: none; }
+  a:hover, a:focus, a:link:hover, a:link:focus {
+    color: #405B55; }
+
+hr {
+  border: 0;
+  margin: 20px 0;
+  border-top: 1px solid #f3f3f3; }
+
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
+.container {
+  width: 100%;
+  margin: auto;
+  max-width: 1170px;
+  padding: 0 1rem; }
+
+.aligned.center {
+  text-align: center !important; }
+
+.aligned.left {
+  text-align: left !important; }
+
+.aligned.right {
+  text-align: right !important; }
+
+.floated.left {
+  float: left !important; }
+
+.floated.right {
+  float: right !important; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: thin; }
+
+h1 {
+  font-size: 2rem; }
+
+h2 {
+  font-size: 1.7rem; }
+
+h3 {
+  font-size: 1.4rem; }
+
+h4 {
+  font-size: 1.2rem; }
+
+h5 {
+  font-size: 1rem; }
+
+h6 {
+  font-size: 0.8rem; }
+
+.header {
+  font-size: 1.5rem;
+  margin: 20px 0; }
+
+input {
+  padding: 10px 15px;
+  border: 1px solid #BDC0BA;
+  border-radius: 5px;
+  font-size: 1rem;
+  display: inline-block; }
+  input:focus {
+    outline: 0;
+    border-color: #405B55; }
+
+section {
+  padding-top: 20px; }
+
+.field {
+  margin: 10px 0;
+  vertical-align: middle; }
+  .field label {
+    display: inline-block;
+    color: #91989f;
+    font-size: .9rem;
+    text-align: right;
+    white-space: nowrap;
+    margin-right: 10px; }
+
+/*# sourceMappingURL=app.css.map */
