@@ -20,14 +20,19 @@ elixir.extend('vue', function() {
 elixir(function(mix) {
 
 	mix
-    .copy('./node_modules/font-awesome/fonts','./dist/fonts')
-    .copy('./node_modules/rainbow-code/dist/rainbow.min.js','./dist/js/rainbow.min.js')
+    .scripts([
+        './node_modules/jquery/dist/jquery.min.js',
+        './node_modules/materialize-css/dist/js/materialize.min.js',
+        './node_modules/rainbow-code/dist/rainbow.min.js','./dist/js/rainbow.min.js'
+    ],'./dist/js/lib.js')
     .sass([
         'style.sass'
-    ])
+    ], './dist/css/app.css')
+    .copy("./src/views/*.html", './dist')
+    .copy('./node_modules/materialize-css/dist/fonts/*','dist/fonts')
     .vue()
     .browserSync({
-        files: ['dist/**/*'],
+        files: ['dist/**/*', 'src/views/*.html'],
 		proxy: 'vue-js.dev'
 	});
 

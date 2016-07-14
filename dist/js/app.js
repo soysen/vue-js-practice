@@ -20535,7 +20535,7 @@ exports.default = {
 	}
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\t<div class=\"column six\">\n\t\t<div class=\"field\">\n\t\t\tHello <strong>{{ name }}</strong>!\n\t\t</div>\n\t\t<div class=\"field\">\n\t\t\t<label for=\"name\">Insert your name</label>\n\t\t\t<input type=\"text\" id=\"name\" name=\"name\" v-model=\"name\">\n\t\t</div>\n\t</div>\n\t<div class=\"column six\">\n\t\t<div class=\"tab menu\">\n\t\t\t<a href=\"#section-1-1\" class=\"item active\">App.vue</a>\n\t\t\t<a href=\"#section-1-2\" class=\"item\">app.js</a>\n\t\t</div>\n\t\t<div class=\"tab content\">\n\t\t\t<div id=\"section-1-1\" class=\"active\">\n\t\t\t\t<pre>\t\t\t\t\t<code data-language=\"html\">\n<template>\n  <div class=\"field\">\n    Hello <strong>{{ name }}</strong>!\n  </div>\n  <div class=\"field\">\n    <label for=\"name\">Insert your name</label>\n    <input type=\"text\" id=\"name\" name=\"name\" v-model=\"name\">\n  </div>\n</template>\n\n<script>\n  export default {\n    data () {\n      return { name: \"Nelson\" }\n    }\n  }\n</script>\n\t\t\t\t</code>\n\t\t\t</pre>\n\t\t</div>\n\t\t<div id=\"section-1-2\">\n\t\t\t<pre>\t\t\t\t<code data-language=\"javascript\">\nnew Vue({\n  el: '#app',\n  components: {\n    App\n  }\n});\n\t\t\t\t\t</code>\n\t\t\t\t</pre>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\t\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\t<div class=\"col s12 m6\">\n        <p class=\"grey-text\">\n            測試傳值與資料連動\n        </p>\n        <ol>\n            <li>{ { name } } 帶入值</li>\n            <li>v-model=\"name\" 可以做連動</li>\n        </ol>\n\t\t<h3>Hello <strong>{{ name }}</strong>!</h3>\n\t\t<label for=\"name\">Insert your name</label>\n\t\t<input type=\"text\" id=\"name\" name=\"name\" v-model=\"name\">\n\t</div>\n\t<div class=\"col s12 m6\">\n\t\t<ul class=\"tabs\">\n\t\t\t<li class=\"tab col s6\">\n\t\t\t\t<a href=\"#section-1-1\" class=\"active\">App.vue</a>\n\t\t\t</li>\n\t\t\t<li class=\"tab col s6\">\n\t\t\t\t<a href=\"#section-1-2\">app.js</a>\n\t\t\t</li>\n\t\t</ul>\n\t\t<div id=\"section-1-1\">\n\t\t\t<pre>\t\t\t\t<code data-language=\"html\">\n<template>\n  <h3>Hello <strong>{{ name }}</strong>!</h3>\n  <label for=\"name\">Insert your name</label>\n  <input type=\"text\" id=\"name\" name=\"name\" v-model=\"name\">\n</template>\n\n<script>\n  export default {\n    data () {\n      return { name: \"Nelson\" }\n    }\n  }\n</script>\n\t\t\t\t</code>\n\t\t\t</pre>\n\t\t</div>\n\t\t<div id=\"section-1-2\">\n\t\t\t<pre>\t\t\t\t<code data-language=\"javascript\">\nnew Vue({\n  el: '#app',\n  components: {\n    App\n  }\n});\n\t\t\t\t</code>\n\t\t\t</pre>\n\t\t</div>\n\t</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -20566,18 +20566,23 @@ exports.default = {
 		}
 	},
 	methods: {
-		toggle: function toggle(ref) {
-			// debugger;
+		toggle: function toggle(ref, item) {
 			this[ref] = !this[ref];
 			// 如果開啟編輯則 focus 在 input 上
 			if (ref == 'edit') {
-				var target = event.target.className != "A" ? event.target.parentNode : event.target;
+				var $this = this;
+				this.oldName = item.name;
+				var target = $(event.target).parents('.title');
 				setTimeout(function () {
-					$(target).prev('input').focus();
-				}, 100);
+					$(target).find('input').focus();
+				}, 150);
 			}
 		},
 		saveName: function saveName() {
+			this.edit = false;
+		},
+		cancelEdit: function cancelEdit(item) {
+			item.name = this.oldName;
 			this.edit = false;
 		},
 		dropItem: function dropItem() {
@@ -20603,12 +20608,13 @@ exports.default = {
 		return {
 			open: false,
 			edit: false,
+			oldName: null,
 			demo: !this.$root.$options.name ? true : false
 		};
 	}
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\t<li class=\"item\">\n        <div class=\"title\" :class=\"{'bold': !item.child==false &amp;&amp; item.child.length}\">\n\t\t\t<button v-if=\"demo\" class=\"button\" v-on:click=\"createItem\"><i class=\"fa fa-plus\"></i></button>\n        \t<a class=\"folder\" v-on:click=\"toggle('open')\">\n\t            <i v-if=\"!item.type || item.type!='file'\" class=\"fa\" :class=\"!open ? 'fa-folder-o' : 'fa-folder-open-o' \"></i>\n\t            <i v-if=\"item.type=='file'\" class=\"fa fa-file-o\"></i>\n\t        </a>\n\t        <input type=\"text\" v-model=\"item.name\" :disabled=\"!edit\" v-on:keyup.enter=\"saveName\">\n\t        <span v-if=\"demo\">\n\t\t        <a v-show=\"!edit\" v-on:click=\"toggle('edit')\">\n\t\t        \t<i class=\"fa fa-pencil\"></i>\n\t\t        </a>\n\t\t        <a v-show=\"edit\" v-on:click=\"saveName\">\n\t\t        \t<i class=\"fa fa-check\"></i>\n\t\t        </a>\n\t\t        <a v-on:click=\"dropItem\">\n\t\t        \t<i class=\"fa fa-trash-o\"></i>\n\t\t        </a>\n\t\t    </span>\n        </div>\n        <ul class=\"list\" v-show=\"open\" v-if=\"!item.child==false &amp;&amp; item.child.length\">\n            <child v-for=\"item in item.child\" :item=\"item\"></child>\n        </ul>\n    </li>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\t<li class=\"collection-item\">\n        <div class=\"title\" :class=\"{'bold': !item.child==false &amp;&amp; item.child.length}\">\n        \t<a class=\"black-text folder\" v-on:click=\"toggle('open')\">\n\t            <i v-if=\"!item.type &amp;&amp; item.type!='file' &amp;&amp; !open\" class=\"material-icons\">folder</i>\n\t            <i v-if=\"!item.type &amp;&amp; item.type!='file' &amp;&amp; open\" class=\"material-icons\">folder_open</i>\n\t            <i v-if=\"item.type=='file'\" class=\"material-icons\">description</i>\n\t        </a>\n\t        <span v-if=\"!edit\">{{item.name}}</span>\n\t        <input type=\"text\" v-model=\"item.name\" v-if=\"edit\" v-on:keyup.enter=\"saveName(item)\" v-on:keyup.esc=\"cancelEdit(item)\">\n\t        <span v-if=\"demo &amp;&amp; edit\" class=\"ctrl-btn\">\n\t\t\t    <a class=\"green-text\" v-show=\"edit\" v-on:click=\"saveName(item)\">\n\t\t        \t<i class=\"material-icons\">check</i>\n\t\t        </a>\n\t\t\t    <a class=\"grey-text\" v-show=\"edit\" v-on:click=\"cancelEdit(item)\">\n\t\t        \t<i class=\"material-icons\">replay</i>\n\t\t        </a>\n\t\t    </span>\n\t\t    <span v-if=\"demo &amp;&amp; !edit\" class=\"ctrl-btn\">\n\t\t        <a class=\"grey-text\" v-show=\"!edit\" v-on:click=\"toggle('edit', item)\">\n\t\t        \t<i class=\"material-icons\">mode_edit</i>\n\t\t        </a>\n\t\t        <a class=\"grey-text\" v-on:click=\"dropItem\">\n\t\t        \t<i class=\"material-icons\">delete</i>\n\t\t        </a>\n\t        </span>\n\t        <div v-if=\"demo\" class=\"secondary-content\">\n\t\t    \t<a class=\"teal-text btn-floating\" v-on:click=\"createItem\"><i class=\"material-icons\">add</i></a>\n\t\t    </div>\n        </div>\n        <ul class=\"collection basic\" v-show=\"open\" v-if=\"!item.child==false &amp;&amp; item.child.length\">\n            <child v-for=\"item in item.child\" :item=\"item\"></child>\n        </ul>\n    </li>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -20646,7 +20652,7 @@ exports.default = {
 	}
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\t<div class=\"column six\">\n\t\t<a v-on:click=\"createItem\" class=\"item labeled button\"><i class=\"fa fa-plus\"></i></a>\n\t\t<div v-for=\"item in items\" class=\"item labeled\">\n\t\t\t{{ item.name }} \n\t\t\t<a class=\"button close\" v-on:click=\"deleteItem($index, item)\">×</a>\n\t\t</div>\n\t</div>\n\t<div class=\"column six\">\n\t\t<div class=\"tab menu\">\n\t\t\t<a href=\"#section-2-1\" class=\"item active\">Items.vue</a>\n\t\t\t<a href=\"#section-2-2\" class=\"item\">app.js</a>\n\t\t</div>\n\t\t<div class=\"tab content\">\n\t\t\t<div id=\"section-2-1\" class=\"active\">\n\t\t\t\t<pre>\t\t\t\t\t<code data-language=\"html\">\n<template>\n  <div v-for=\"item in items\" class=\"item labeled\">\n    {{ item.name }} \n    <a class=\"button close\" v-on:click=\"deleteItem(this)\">×</a>\n  </div>\n</template>\n\n<script>\n  var items = [\n    { name: \"List item\" },\n    { name: \"List item\" },\n    { name: \"List item\" }\n  ];\n\n  export default {\n    data () {\n      return { items: items }\n    },\n    methods: {\n      createItem () {\n        items.push({\n          name: \"New list item\"\n        });\n      },\n      deleteItem (index, item) {\n        items.splice(index, 1);\n      }\n    }\n  }\n</script>\n\t\t\t\t</code>\n\t\t\t</pre>\n\t\t</div>\n\t\t<div id=\"section-2-2\">\n\t\t\t<pre>\t\t\t\t<code data-language=\"javascript\">\nnew Vue({\n  el: '#list',\n  components: {\n    Items\n  }\n});\n\t\t\t\t\t</code>\n\t\t\t\t</pre>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\t\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\t<div class=\"col s12 m6\">\n\t\t<p class=\"grey-text\">測試陣列資料以及綁定事件</p>\n        <ol>\n\t\t\t<li>v-for=\"item in items\"</li>\n\t\t\t<li>v-on:click=\"function($index, item)\"</li>\n\t\t</ol>\n\t\t<ul class=\"collection basic\">\n\t\t\t<li v-for=\"item in items\" class=\"collection-item\">\n\t\t\t\t{{ item.name }} \n\t\t\t\t<a class=\"secondary-content close\" v-on:click=\"deleteItem($index, item)\">\n\t\t\t\t\t<i class=\"material-icons\">remove</i>\n\t\t\t\t</a>\n\t\t\t</li>\n\t\t</ul>\n\t\t<div class=\"col s12\">\n\t\t\t<a v-on:click=\"createItem\" class=\"btn-floating waves-effect waves-light red tooltipped\" data-position=\"right\" data-delay=\"50\" data-tooltip=\"新增資料夾\">\n\t\t\t\t<i class=\"material-icons\">add</i>\n\t\t\t</a>\n\t\t</div>\n\t</div>\n\t<div class=\"col s12 m6\">\n\t\t<ul class=\"tabs\">\n\t\t\t<li class=\"tab col s6\"><a href=\"#section-2-1\" class=\"active\">Items.vue</a></li>\n\t\t\t<li class=\"tab col s6\"><a href=\"#section-2-2\">app.js</a></li>\n\t\t</ul>\n\t\t<div id=\"section-2-1\">\n\t\t\t<pre>\t\t\t\t<code data-language=\"html\">\n<template>\n  <a v-on:click=\"createItem\" class=\"btn-floating waves-effect waves-light red\">\n    <i class=\"material-icons\">add</i>\n  </a>\n  <ul class=\"collection basic\">\n    <li v-for=\"item in items\" class=\"collection-item\">\n      {{ item.name }} \n      <a class=\"secondary-content close\" v-on:click=\"deleteItem($index, item)\">\n        <i class=\"material-icons\">remove</i>\n      </a>\n    </li>\n  </ul>\n</template>\n\n<script>\n  var items = [\n    { name: \"List item\" },\n    { name: \"List item\" },\n    { name: \"List item\" }\n  ];\n\n  export default {\n    data () {\n      return { items: items }\n    },\n    methods: {\n      createItem () {\n        items.push({\n          name: \"New list item\"\n        });\n      },\n      deleteItem (index, item) {\n        items.splice(index, 1);\n      }\n    }\n  }\n</script>\n\t\t\t\t</code>\n\t\t\t</pre>\n\t\t</div>\n\t\t<div id=\"section-2-2\">\n\t\t\t<pre>\t\t\t\t<code data-language=\"javascript\">\nnew Vue({\n  el: '#list',\n  components: {\n    Items\n  }\n});\n\t\t\t\t</code>\n\t\t\t</pre>\n\t\t</div>\n\t</div>\n\t\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -20658,100 +20664,6 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":4,"vue-hot-reload-api":3}],8:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-
-var Child = require('../components/Child.vue');
-var newItem = {
-  name: "",
-  parent: null
-};
-var tree = [{
-  name: "vue-js",
-  child: [{
-    name: "dist/",
-    child: [{
-      name: "css/",
-      child: [{ name: "app.css", type: 'file', child: [] }]
-    }, { name: "fonts/", child: [] }, { name: "js/",
-      child: [{ name: "app.js", type: 'file', child: [] }, { name: "rainbow.min.js", type: 'file', child: [] }]
-    }, { name: "index.html", type: "file", child: [] }]
-  }, {
-    name: "node_modules/",
-    child: []
-  }, {
-    name: "src/",
-    child: [{
-      name: "js/",
-      child: [{
-        name: "components/",
-        child: [{ name: "App.vue", type: 'file', child: [] }, { name: "Child.vue", type: 'file', child: [] }, { name: "List.vue", type: 'file', child: [] }, { name: "Project.vue", type: 'file', child: [] }, { name: "Tree.vue", type: 'file', child: [] }]
-      }, { name: "app.js", type: 'file', child: [] }]
-    }, {
-      name: "sass/",
-      child: [{
-        name: "components/",
-        child: [{ name: "tab.sass", type: 'file', child: [] }]
-      }, {
-        name: "elements/",
-        child: [{ name: "form.sass", type: 'file', child: [] }, { name: "header.sass", type: 'file', child: [] }, { name: "list.sass", type: 'file', child: [] }]
-      }, {
-        name: "globals/",
-        child: [{ name: "global.sass", type: 'file', child: [] }, { name: "grid.sass", type: 'file', child: [] }, { name: "variables.sass", type: 'file', child: [] }]
-      }, {
-        name: "style.sass",
-        type: 'file',
-        child: []
-      }]
-    }]
-  }]
-}];
-
-exports.default = {
-  components: {
-    child: Child,
-    props: {
-      item: Object
-    }
-  },
-  name: "project",
-  props: {
-    item: Object
-  },
-  methods: {
-    createItem: function createItem() {
-      this.tree.push({
-        name: "New Item",
-        child: [],
-        open: false,
-        edit: false
-      });
-    }
-  },
-  data: function data() {
-    return {
-      tree: tree,
-      newItem: newItem
-    };
-  }
-};
-if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"column six\">\n  <ul class=\"list tree\" v-if=\"tree.length\">\n    <child v-for=\"item in tree\" :item=\"item\"></child>\n  </ul>\n</div>\n<div class=\"column six\">\n  <blockquote>\n    <h5 class=\"header\">My Github</h5>\n    <a href=\"https://github.com/soysen/vue-js-practice/\" target=\"_blank\">https://github.com/soysen/vue-js-practice/</a>\n  </blockquote>\n</div>\n"
-if (module.hot) {(function () {  module.hot.accept()
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  if (!module.hot.data) {
-    hotAPI.createRecord("_v-716f36b7", module.exports)
-  } else {
-    hotAPI.update("_v-716f36b7", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
-  }
-})()}
-},{"../components/Child.vue":6,"vue":4,"vue-hot-reload-api":3}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20812,7 +20724,7 @@ exports.default = {
 	}
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\t<div class=\"column six\">\n\t\t<ul class=\"list tree\" v-if=\"tree.length\">\n\t\t\t<child v-for=\"item in tree\" :item=\"item\"></child>\n\t\t\t<li class=\"item\">\n\t\t\t\t<div class=\"title\">\n\t\t\t\t\t<a class=\"folder\" v-on:click=\"createItem\">\n\t\t\t\t\t\t<i class=\"fa fa-plus\"></i> Add Item\n\t\t\t\t\t</a>\n\t\t\t\t</div>\n\t\t\t</li>\n\t\t</ul>\n\t</div>\n\t<div class=\"column six\">\n\t\t<div class=\"tab menu\">\n\t\t\t<a href=\"#section-3-1\" class=\"item active\">Tree.vue</a>\n\t\t\t<a href=\"#section-3-2\" class=\"item\">Child.vue</a>\n\t\t\t<a href=\"#section-3-3\" class=\"item\">app.js</a>\n\t\t</div>\n\t\t<div class=\"tab content\">\n\t\t\t<div id=\"section-3-1\" class=\"active\">\n\t\t\t\t<pre><code data-language=\"html\">\n<template>\n  <ul class=\"list tree\" v-if=\"tree.length\">\n    <child v-for=\"item in tree\" :item=\"item\"></child>\n  </ul>\n</template>\n\n<script>\n  var Child = require('../components/Child.vue');\n  var newItem = {\n    name: \"\",\n    parent: null\n  };\n  var tree = [\n    {\n      name: \"Level 1-1\",\n      child: [\n        {\n          name: \"Level 2-1\",\n          child: [\n            {\n              name: \"Level 3-1\",\n              child: []\n            },\n            {\n              name: \"Level 3-2\",\n              child: []\n            }\n          ]\n        },\n        {\n          name: \"Level 2-2\",\n          child: []\n        }\n      ]\n    }, {\n      name: \"Level 1-2\",\n      child: []\n    }\n  ];\n  \n  export default {\n    components: {\n      child: Child,\n      props: {\n        item: Object\n      }\n    },\n    props: {\n      item: Object\n    }, \n    data () {\n      return { \n        tree: tree,\n        newItem: newItem\n      }\n    }\n  }\n</script>\n\t\t\t</code></pre>\n\t\t</div>\n\t\t<div id=\"section-3-2\">\n\t\t\t<pre><code data-language=\"html\">\n<template>\n  <li class=\"item\">\n    <div class=\"title\" :class=\"{'bold': !item.child==false &amp;&amp; item.child.length}\">\n      <!-- 增加層級 -->\n      <button class=\"button\" v-on:click=\"createItem\"><i class=\"fa fa-plus\"></i></button>\n      <!-- 開闔 -->\n      <a class=\"folder\" v-on:click=\"toggle('open')\">\n        <i class=\"fa\" :class=\"!open ? 'fa-folder-o' : 'fa-folder-open-o'\"></i>\n      </a>\n      <!-- 輸入欄位，修改名稱用 -->\n      <input type=\"text\" v-model=\"item.name\" :disabled=\"!edit\" v-on:keyup.enter=\"saveName\">\n      <!-- 編輯按鈕 -->\n      <a v-show=\"!edit\" v-on:click=\"toggle('edit')\">\n        <i class=\"fa fa-pencil\"></i>\n      </a>\n      <!-- 確認修改按鈕 -->\n      <a v-show=\"edit\" v-on:click=\"saveName\">\n        <i class=\"fa fa-check\"></i>\n      </a>\n      <!-- 刪除項目按鈕 -->\n      <a v-on:click=\"dropItem\">\n        <i class=\"fa fa-trash-o\"></i>\n      </a>\n    </div>\n    <!-- 下一層 -->\n    <ul class=\"list\" v-show=\"open\" v-if=\"!item.child==false &amp;&amp; item.child.length\">\n      <child v-for=\"item in item.child\" :item=\"item\"></child>\n    </ul>\n  </li>\n</template>\n\n<script>\n  var $ = require(\"jquery\");\n  var Child = require('../components/Child.vue');\n\n  export default {\n    name: \"child\",\n    components: {\n      child: Child,\n      props: {\n        item: Object\n      }\n    },\n    methods: {\n      toggle (ref) {\n        this[ref] = !this[ref];\n        // 如果開啟編輯則 focus 在 input 上\n        if(ref=='edit') {\n          var target = event.target.className!=\"A\"?event.target.parentNode:event.target;\n          setTimeout(function() {\n            $(target).prev('input').focus();\n          }, 100);\n        }\n      },\n      saveName () {\n        this.edit = false;\n      },\n      dropItem () {\n      \tif(confirm(\"子項目會跟著刪除，真的要刪？\"))\n          this.$parent.item.child.$remove(this.item);\n      },\n      createItem () {\n        // debugger;\n        if(!this.item.child) \n          this.item.child = new Array();\n        this.item.child.push({\n          name: 'New layer',\n          child: [],\n          open: false,\n          edit: false\n        });\n        if(!this.open) this.open = true;\n      }\n    },\n    props: {\n      item: Object\n    },\n    data () {\n      return {\n        open: false,\n        edit: false\n      }\n    }\n  }\n</script>\n\t\t\t</code></pre>\n\t\t</div>\n\t\t<div id=\"section-3-3\">\n\t\t\t<pre><code data-language=\"javascript\">\nnew Vue({\n  el: '#tree',\n  components: {\n    Tree\n  }\n});\n\t\t\t\t</code></pre>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n  <p class=\"grey-text\">\n    結合以上特性，搭配子組件，產生樹狀結構\n  </p>\n  <ol>\n    <li>\n      &lt;child v-for=\"item in tree\" :item=\"item\"&gt;&lt;/child&gt;\n      帶入子組件\n    </li>\n    <li>\n    \t使用 v-on:keyup.enter 和 v-on:keyup.esc 綁定鍵盤事件\n    </li>\n  </ol>\n\t<ul class=\"collection basic folder\" v-if=\"tree.length\">\n\t\t<child v-for=\"item in tree\" :item=\"item\"></child>\n\t</ul>\n  <a class=\"btn-floating waves-effect waves-light red tooltipped\" data-position=\"right\" data-delay=\"50\" data-tooltip=\"新增資料夾\" v-on:click=\"createItem\">\n    <i class=\"material-icons\">add</i>\n  </a>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -20823,15 +20735,13 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-7105d120", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../components/Child.vue":6,"vue":4,"vue-hot-reload-api":3}],10:[function(require,module,exports){
-var $ = require("jquery");
+},{"../components/Child.vue":6,"vue":4,"vue-hot-reload-api":3}],9:[function(require,module,exports){
 var Vue = require("vue");
 
 // Components
 var App = require("./components/App.vue");
 var List = require("./components/List.vue");
 var Tree = require("./components/Tree.vue");
-var Project = require("./components/Project.vue");
 
 new Vue({
 	el: '#app',
@@ -20854,13 +20764,7 @@ new Vue({
 	}
 });
 
-new Vue({
-	el: '#project',
-	name: 'project',
-	components: {
-		Project
-	}
-});
+
 // bind click event
 $("div.tab.menu > a.item").on("click", function(e){
 	e.preventDefault();
@@ -20869,4 +20773,5 @@ $("div.tab.menu > a.item").on("click", function(e){
 	$(id).addClass("active").siblings().removeClass("active");
 })
 
-},{"./components/App.vue":5,"./components/List.vue":7,"./components/Project.vue":8,"./components/Tree.vue":9,"jquery":2,"vue":4}]},{},[10])
+$('ul.tabs').tabs();
+},{"./components/App.vue":5,"./components/List.vue":7,"./components/Tree.vue":8,"vue":4}]},{},[9])

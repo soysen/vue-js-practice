@@ -1,25 +1,45 @@
 <template>
-	<div class="column six">
-		<a v-on:click="createItem" class="item labeled button"><i class="fa fa-plus"></i></a>
-		<div v-for="item in items" class="item labeled">
-			{{ item.name }} 
-			<a class="button close" v-on:click="deleteItem($index, item)">&times;</a>
+	<div class="col s12 m6">
+		<p class="grey-text">測試陣列資料以及綁定事件</p>
+        <ol>
+			<li>v-for="item in items"</li>
+			<li>v-on:click="function($index, item)"</li>
+		</ol>
+		<ul class="collection basic">
+			<li v-for="item in items" class="collection-item">
+				{{ item.name }} 
+				<a class="secondary-content close" v-on:click="deleteItem($index, item)">
+					<i class="material-icons">remove</i>
+				</a>
+			</li>
+		</ul>
+		<div class="col s12">
+			<a v-on:click="createItem" class="btn-floating waves-effect waves-light red tooltipped" 
+                data-position="right" data-delay="50" data-tooltip="新增資料夾">
+				<i class="material-icons">add</i>
+			</a>
 		</div>
 	</div>
-	<div class="column six">
-		<div class="tab menu">
-			<a href="#section-2-1" class="item active">Items.vue</a>
-			<a href="#section-2-2" class="item">app.js</a>
-		</div>
-		<div class="tab content">
-			<div id="section-2-1" class="active">
-				<pre>
-					<code data-language="html">
+	<div class="col s12 m6">
+		<ul class="tabs">
+			<li class="tab col s6"><a href="#section-2-1" class="active">Items.vue</a></li>
+			<li class="tab col s6"><a href="#section-2-2">app.js</a></li>
+		</ul>
+		<div id="section-2-1">
+			<pre>
+				<code data-language="html">
 <template>
-  <div v-for="item in items" class="item labeled">
-    {{ item.name }} 
-    <a class="button close" v-on:click="deleteItem(this)">&times;</a>
-  </div>
+  <a v-on:click="createItem" class="btn-floating waves-effect waves-light red">
+    <i class="material-icons">add</i>
+  </a>
+  <ul class="collection basic">
+    <li v-for="item in items" class="collection-item">
+      {{ item.name }} 
+      <a class="secondary-content close" v-on:click="deleteItem($index, item)">
+        <i class="material-icons">remove</i>
+      </a>
+    </li>
+  </ul>
 </template>
 
 <script>
@@ -57,9 +77,8 @@ new Vue({
     Items
   }
 });
-					</code>
-				</pre>
-			</div>
+				</code>
+			</pre>
 		</div>
 	</div>
 	

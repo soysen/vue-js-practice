@@ -1,11 +1,9 @@
-var $ = require("jquery");
 var Vue = require("vue");
 
 // Components
 var App = require("./components/App.vue");
 var List = require("./components/List.vue");
 var Tree = require("./components/Tree.vue");
-var Project = require("./components/Project.vue");
 
 new Vue({
 	el: '#app',
@@ -28,13 +26,7 @@ new Vue({
 	}
 });
 
-new Vue({
-	el: '#project',
-	name: 'project',
-	components: {
-		Project
-	}
-});
+
 // bind click event
 $("div.tab.menu > a.item").on("click", function(e){
 	e.preventDefault();
@@ -42,3 +34,5 @@ $("div.tab.menu > a.item").on("click", function(e){
 	$(this).addClass("active").siblings().removeClass("active")
 	$(id).addClass("active").siblings().removeClass("active");
 })
+
+$('ul.tabs').tabs();

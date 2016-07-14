@@ -1,26 +1,35 @@
 <template>
-	<li class="item">
-        <div class="title" 
-        :class="{'bold': !item.child==false && item.child.length}">
-			<button v-if="demo" class="button" v-on:click="createItem"><i class="fa fa-plus"></i></button>
-        	<a class="folder" v-on:click="toggle('open')">
-	            <i v-if="!item.type || item.type!='file'" class="fa" :class="!open ? 'fa-folder-o' : 'fa-folder-open-o' "></i>
-	            <i v-if="item.type=='file'" class="fa fa-file-o"></i>
+	<li class="collection-item">
+        <div class="title" :class="{'bold': !item.child==false && item.child.length}">
+        	<a class="black-text folder" v-on:click="toggle('open')">
+	            <i v-if="!item.type && item.type!='file' && !open" class="material-icons">folder</i>
+	            <i v-if="!item.type && item.type!='file' && open" class="material-icons">folder_open</i>
+	            <i v-if="item.type=='file'" class="material-icons">description</i>
 	        </a>
-	        <input type="text" v-model="item.name" :disabled="!edit" v-on:keyup.enter="saveName" />
-	        <span v-if="demo">
-		        <a v-show="!edit" v-on:click="toggle('edit')">
-		        	<i class="fa fa-pencil"></i>
+	        <span v-if="!edit">{{item.name}}</span>
+	        <input type="text" v-model="item.name" v-if="edit" 
+	        	v-on:keyup.enter="saveName(item)" v-on:keyup.esc="cancelEdit(item)" />
+	        <span v-if="demo && edit" class="ctrl-btn">
+			    <a class="green-text" v-show="edit" v-on:click="saveName(item)">
+		        	<i class="material-icons">check</i>
 		        </a>
-		        <a v-show="edit" v-on:click="saveName">
-		        	<i class="fa fa-check"></i>
-		        </a>
-		        <a v-on:click="dropItem">
-		        	<i class="fa fa-trash-o"></i>
+			    <a class="grey-text" v-show="edit" v-on:click="cancelEdit(item)">
+		        	<i class="material-icons">replay</i>
 		        </a>
 		    </span>
+		    <span v-if="demo && !edit" class="ctrl-btn">
+		        <a class="grey-text" v-show="!edit" v-on:click="toggle('edit', item)">
+		        	<i class="material-icons">mode_edit</i>
+		        </a>
+		        <a class="grey-text" v-on:click="dropItem">
+		        	<i class="material-icons">delete</i>
+		        </a>
+	        </span>
+	        <div v-if="demo" class="secondary-content">
+		    	<a class="teal-text btn-floating" v-on:click="createItem"><i class="material-icons">add</i></a>
+		    </div>
         </div>
-        <ul class="list" v-show="open" v-if="!item.child==false && item.child.length">
+        <ul class="collection basic" v-show="open" v-if="!item.child==false && item.child.length">
             <child v-for="item in item.child" :item="item"></child>
         </ul>
     </li>
@@ -39,18 +48,23 @@
 			}
 		},
 		methods: {
-			toggle (ref) {
-				// debugger;
+			toggle (ref, item) {
 				this[ref] = !this[ref];
 				// 如果開啟編輯則 focus 在 input 上
 				if(ref=='edit') {
-					var target = event.target.className!="A"?event.target.parentNode:event.target;
+					var $this = this;
+					this.oldName = item.name;
+					var target = $(event.target).parents('.title');
 					setTimeout(function() {
-						$(target).prev('input').focus();
-					}, 100);
-				}
+						$(target).find('input').focus();
+					}, 150);
+				} 
 			},
 			saveName () {
+				this.edit = false;
+			},
+			cancelEdit(item) {
+				item.name = this.oldName;
 				this.edit = false;
 			},
 			dropItem () {
@@ -78,6 +92,7 @@
 			return {
 				open: false,
 				edit: false,
+				oldName: null,
 				demo: !this.$root.$options.name ? true : false
 			}
 		}

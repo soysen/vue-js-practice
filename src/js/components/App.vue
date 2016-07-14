@@ -1,30 +1,32 @@
 <template>
-	<div class="column six">
-		<div class="field">
-			Hello <strong>{{ name }}</strong>!
-		</div>
-		<div class="field">
-			<label for="name">Insert your name</label>
-			<input type="text" id="name" name="name" v-model="name">
-		</div>
+	<div class="col s12 m6">
+        <p class="grey-text">
+            測試傳值與資料連動
+        </p>
+        <ol>
+            <li>{ { name } } 帶入值</li>
+            <li>v-model="name" 可以做連動</li>
+        </ol>
+		<h3>Hello <strong>{{ name }}</strong>!</h3>
+		<label for="name">Insert your name</label>
+		<input type="text" id="name" name="name" v-model="name">
 	</div>
-	<div class="column six">
-		<div class="tab menu">
-			<a href="#section-1-1" class="item active">App.vue</a>
-			<a href="#section-1-2" class="item">app.js</a>
-		</div>
-		<div class="tab content">
-			<div id="section-1-1" class="active">
-				<pre>
-					<code data-language="html">
+	<div class="col s12 m6">
+		<ul class="tabs">
+			<li class="tab col s6">
+				<a href="#section-1-1" class="active">App.vue</a>
+			</li>
+			<li class="tab col s6">
+				<a href="#section-1-2">app.js</a>
+			</li>
+		</ul>
+		<div id="section-1-1">
+			<pre>
+				<code data-language="html">
 <template>
-  <div class="field">
-    Hello <strong>{{ name }}</strong>!
-  </div>
-  <div class="field">
-    <label for="name">Insert your name</label>
-    <input type="text" id="name" name="name" v-model="name">
-  </div>
+  <h3>Hello <strong>{{ name }}</strong>!</h3>
+  <label for="name">Insert your name</label>
+  <input type="text" id="name" name="name" v-model="name">
 </template>
 
 <script>
@@ -46,12 +48,10 @@ new Vue({
     App
   }
 });
-					</code>
-				</pre>
-			</div>
+				</code>
+			</pre>
 		</div>
 	</div>
-	
 </template>
 
 <script>
