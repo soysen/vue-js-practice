@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VueJS 日常練習</title>
+    <meta name="keywords" content="vue.js,practice">
+    <meta name="description" content="VueJS 日常練習">
+    <meta name="author" content="Nelson Chung">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+    <header>
+        <nav class="teal darken-2">
+            <div class="container">
+                <div class="nav-wrapper">
+                    <a href="index.html" class="brand-logo right">Vue.js 練習</a>
+                    <ul class="mdl-navigation">
+                        <li><a href="index.html">基礎練習</a></li>
+                        <li class="active"><a href="todo.html">TODO List</a></li>
+                        <li><a href="router.html">Router</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container">
+        <section class="section">
+            <div id="todo" class="row">
+                <todo></todo>
+            </div>
+        </section>
+        <section class="section">
+            <h5 class="brown-text">使用 Vue Rresource 與 filter</h5>
+            <ol>
+                <li>使用 vue-resource 進行 api 串接。</li>
+                <li>使用 filter 過濾日期格式，並建立 filters 資料夾另外匯入。</li>
+            </ol>
+        </section>
+    </main>
+    <footer class="page-footer teal lighten-3">
+        <div class="container">
+            <div class="row">
+                Powerd by NelsonChung.
+                <a class="grey-text text-lighten-4 right" href="https://github.com/soysen/vue-js-practice/">
+                    <i class="tiny material-icons">settings</i> My Github 
+                </a>
+            </div>
+        </div>
+    </footer>
+    <script src="./js/lib.js"></script>
+    <script src="js/todo.js"></script>
+</body>
+</html>

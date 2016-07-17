@@ -1,0 +1,60 @@
+
+#todo-list 
+    column-gap: 1rem
+    column-count: 2
+    
+    .card
+        width: 100%
+        display: inline-block
+    .card-content
+        padding: 10px 20px
+    .card-title
+        line-height: 1.5em
+        margin-bottom: 0
+    .card-meta
+        color: #666
+        padding: 5px 0
+        .chip
+            height: 2em
+            line-height: 2em
+            color: #fff
+            font-weight: 300
+            margin-top: 0
+            background-color: rgba(0,0,0,.35)
+        .chip i.material-icons
+            line-height: 1.5em
+    .card-title
+        margin-top: 0
+        input
+            height: 1em
+            font-size: 1em
+            line-height: 1em
+            margin-bottom: 0
+    textarea
+        padding: 0
+        width: 100%
+        min-height: 10em
+        background: rgba(245,124,0,0.3)
+    .card-action
+        padding: 0
+        a.btn-flat:hover,
+        a.btn-flat:focus
+            color: #000
+        a.btn-flat.delete
+            margin-right: 0
+        a.btn-flat i.left
+            margin-right: 5px
+        a.btn-flat i.right
+            margin-left: 5px
+
+.card-panel.editor
+    .ctrl a
+        padding: 0 0.5em
+    .card-title
+        margin-right: 95px
+
+@media(max-width: 600px)
+    #todo-list 
+        column-gap: 0rem
+        column-count: 1
+

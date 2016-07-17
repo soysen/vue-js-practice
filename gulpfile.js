@@ -9,7 +9,7 @@ elixir.config.assetsPath = 'src';
 
 elixir.extend('vue', function() {
 	new Task('vue', function() {
-        return gulp.src('src/js/app.js')
+        return gulp.src('src/js/*.js')
         .pipe(browserify({
         	transform: 'vueify'
         }))
@@ -32,7 +32,7 @@ elixir(function(mix) {
     .copy('./node_modules/materialize-css/dist/fonts/*','dist/fonts')
     .vue()
     .browserSync({
-        files: ['dist/**/*', 'src/views/*.html'],
+        files: ['dist/**/*.js', 'src/**/*.vue', 'src/**/*.js', 'src/views/*.html'],
 		proxy: 'vue-js.dev'
 	});
 

@@ -3,6 +3,11 @@
 @import "./node_modules/rainbow-code/themes/sass/_base"
 @import "./node_modules/rainbow-code/themes/sass/github"
 
+@import "components/card"
+@import "components/chip"
+@import "components/tab"
+@import "components/collection"
+
 body 
     display: flex
     min-height: 100vh
@@ -18,62 +23,13 @@ pre
     max-height: 300px
     border: 0
 
-.collection.basic
+textarea 
     border: 0
-    
-    a
-        cursor: pointer
+    padding: 10px
+    background: #f3f3f3
 
-    &.folder,
-    .collection
-        padding-right: 0
-    .collection
-        margin-top: 0
-        margin-bottom: 0
-        padding-top: 0
-        padding-left: 20px
+a 
+    cursor: pointer
 
-    &.folder .collection-item 
-        padding: 5px 0 5px 5px
-        line-height: 3em
-
-        .title 
-            * 
-                vertical-align: middle
-            a
-                display: inline-block
-                vertical-align: middle
-                cursor: pointer
-                margin-right: 5px
-
-                &:not(.folder)
-                    display: none
-            
-            span, input
-                display: inline-block
-                height: 3em
-                line-height: 3em
-            
-            span.ctrl-btn
-                margin-left: 5px       
-            &.bold
-                vertical-align: middle
-            &.bold, &.bold input
-                font-weight: bold
-
-        input
-            margin: 0
-            width: auto !important
-            max-width: 50%
-        input:disabled
-            color: #000
-            border-bottom-color: rgba(255,255,255, 1)
-
-        .title:hover,
-        .title:focus
-            background: #f3f3f3
-            a:not(.folder)
-                display: inline-block
-
-.tabs .tab
-    text-transform: initial
+h5
+    margin-top: 1em
