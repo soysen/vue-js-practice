@@ -12199,10 +12199,11 @@ exports.default = {
             };
         },
         toggleEdit: function toggleEdit(item) {
+            // console.log(item);
             item.edit = !item.edit;
         },
         getTodoList: function getTodoList() {
-            return this.$http.get('/api/todo.js', function (response, status, request) {
+            return this.$http.get('./api/todo.js', function (response, status, request) {
                 if (request.status == 200) resolve(response);else reject(Error(request.statusText));
             });
         },
@@ -12261,7 +12262,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n    <div class=\"col s12\">\n        <editor :item=\"newItem\" :todo=\"newTodo\"></editor>\n        <div id=\"todo-list\">\n            <div v-for=\"item of list\" class=\"card yellow lighten-4\">\n                <div class=\"card-content\">\n                    <h5 class=\"card-title\">\n                        <span v-if=\"!item.edit\">{{ item.title }}</span>\n                        <input type=\"text\" v-if=\"item.edit\" v-model=\"item.title\">\n                    </h5>\n                    <div class=\"card-meta orange-text accent-text-3\">{{ item.created_at | date_string }}</div>\n                    <p v-if=\"item.type==0 &amp;&amp; !item.edit\">{{ item.description }}</p>\n                    <textarea v-if=\"item.type==0 &amp;&amp; item.edit\">{{ item.description }}</textarea>\n                    <div v-if=\"item.type==1\">\n                        <p v-for=\"todo of item.list\" class=\"todo-item\">\n                            <a class=\"right floated\" @click=\"delTodo(todo, item.list)\"><i class=\"material-icons\">remove</i></a>\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"item-{{ item.id }}-{{ $index }}\" v-model=\"todo.done\" value=\"true\">\n                            <label for=\"item-{{ item.id }}-{{ $index }}\">\n                                <span v-if=\"!item.edit\">{{ todo.title }}</span>\n                                <input type=\"text\" v-if=\"item.edit\" v-model=\"todo.title\">\n                            </label>\n                        </p>\n                        <div v-if=\"item.edit\" class=\"todo-item\">\n                            <a @click=\"addTodo(item)\" class=\"right floated\"><i class=\"material-icons\">add</i></a>\n                            <input type=\"checkbox\" class=\"filled-in\">\n                            <label>\n                                <input type=\"text\" v-if=\"item.edit\" v-model=\"newTodo.title\" @keyup.enter=\"addTodo(item)\">\n                            </label>\n                        </div>\n                    </div>\n                </div>\n                <div class=\"card-action\">\n                    <a @click=\"toggleEdit(item)\" v-if=\"!item.edit\" class=\"btn-flat orange-text accent-text-3\">\n                        <i class=\"tiny material-icons left\">mode_edit</i>編輯\n                    </a>\n                    <a @click=\"toggleEdit(item)\" v-if=\"item.edit\" class=\"btn-flat orange-text accent-text-3\">\n                        <i class=\"tiny material-icons left\">check</i>儲存\n                    </a>\n                    <a v-on:click=\"deleteItem(item)\" class=\"btn-flat delete orange-text accent-text-3 right floated\">\n                        刪除<i class=\"tiny material-icons right\">delete</i>\n                    </a> \n                </div>\n            </div>\n        </div>\n\t</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n    <div class=\"col s12\">\n        <editor :item=\"newItem\" :todo=\"newTodo\"></editor>\n        <div id=\"todo-list\">\n            <div v-for=\"item of list\" class=\"card yellow lighten-4\">\n                <div class=\"card-content\">\n                    <h5 class=\"card-title\">\n                        <span v-if=\"!item.edit\">{{ item.title }}</span>\n                        <input type=\"text\" v-if=\"item.edit\" v-model=\"item.title\">\n                    </h5>\n                    <div class=\"card-meta orange-text accent-text-3\">{{ item.created_at | date_string }}</div>\n                    <p v-if=\"item.type==0 &amp;&amp; !item.edit\">{{{ item.description | nl2br }}}</p>\n                    <textarea v-if=\"item.type==0 &amp;&amp; item.edit\" v-model=\"item.description\"></textarea>\n                    <div v-if=\"item.type==1\">\n                        <p v-for=\"todo of item.list\" class=\"todo-item\">\n                            <a class=\"right floated\" @click=\"delTodo(todo, item.list)\"><i class=\"material-icons\">remove</i></a>\n                            <input type=\"checkbox\" class=\"filled-in\" id=\"item-{{ item.id }}-{{ $index }}\" v-model=\"todo.done\" value=\"true\">\n                            <label for=\"item-{{ item.id }}-{{ $index }}\">\n                                <span v-if=\"!item.edit\">{{ todo.title }}</span>\n                                <input type=\"text\" v-if=\"item.edit\" v-model=\"todo.title\">\n                            </label>\n                        </p>\n                        <div v-if=\"item.type==1 &amp;&amp; item.edit\" class=\"todo-item\">\n                            <a @click=\"addTodo(item)\" class=\"right floated\"><i class=\"material-icons\">add</i></a>\n                            <input type=\"checkbox\" class=\"filled-in\">\n                            <label>\n                                <input type=\"text\" v-model=\"newTodo.title\" @keyup.enter=\"addTodo(item)\">\n                            </label>\n                        </div>\n                    </div>\n                </div>\n                <div class=\"card-action\">\n                    <a @click=\"toggleEdit(item)\" v-if=\"!item.edit\" class=\"btn-flat orange-text accent-text-3\">\n                        <i class=\"tiny material-icons left\">mode_edit</i>編輯\n                    </a>\n                    <a @click=\"toggleEdit(item)\" v-if=\"item.edit\" class=\"btn-flat orange-text accent-text-3\">\n                        <i class=\"tiny material-icons left\">check</i>儲存\n                    </a>\n                    <a v-on:click=\"deleteItem(item)\" class=\"btn-flat delete orange-text accent-text-3 right floated\">\n                        刪除<i class=\"tiny material-icons right\">delete</i>\n                    </a> \n                </div>\n            </div>\n        </div>\n\t</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -12281,11 +12282,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = {
     name: "editor",
     methods: {
-        getTodoList: function getTodoList() {
-            return this.$http.get('/api/todo.js', function (response, status, request) {
-                if (request.status == 200) resolve(response);else reject(Error(request.statusText));
-            });
-        },
         addTodo: function addTodo() {
             this.newItem.list.push({
                 title: this.newTodo.title,
@@ -12300,9 +12296,16 @@ exports.default = {
             list.$remove(item);
         },
         saveItem: function saveItem() {
-            var item = this.newItem;
-            item.id = this.$parent.list.length + 1;
-            this.$parent.list.push(item);
+            var item = {
+                id: this.$parent.list.length + 1,
+                title: this.newItem.title,
+                description: this.newItem.description,
+                list: this.newItem.list,
+                created_at: Date.now(),
+                type: Number(this.newItem.type),
+                edit: false
+            };
+            this.$parent.list = [item].concat(this.$parent.list);
             this.newItem = {
                 title: "",
                 description: "",
@@ -12311,13 +12314,6 @@ exports.default = {
                 type: 0
             };
         }
-    },
-    ready: function ready() {
-        var _this = this;
-
-        this.getTodoList().then(function (response) {
-            _this.$set("list", response.json());
-        });
     },
     data: function data() {
         return {
@@ -12367,18 +12363,12 @@ new Vue({
 },{"./components/Todo.vue":43,"./filters/todo-filter.js":46,"vue":42,"vue-resource":41}],46:[function(require,module,exports){
 var Vue = require("vue");
 
-Vue.filter('getKeyword', function (id, list) {
-    let item;
-    for(let i of this.keywords) {
-        if(i.id===id) item = i;
-    }
-    return item.name;
+Vue.filter('date_string', function (val) {
+    var date = new Date(val);
+    return date.toLocaleString();
 });
 
-Vue.filter('date_string', function (val) {
-    let date = new Date(val);
-    console.log(date.toLocaleString()); 
-    return date.toLocaleString();
-    
+Vue.filter('nl2br', function (text) {
+    return text.replace(/[\r|\n]/g,"<br/>");
 });
 },{"vue":42}]},{},[45])

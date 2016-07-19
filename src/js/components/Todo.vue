@@ -9,8 +9,8 @@
                         <input type="text" v-if="item.edit" v-model="item.title">
                     </h5>
                     <div class="card-meta orange-text accent-text-3">{{ item.created_at | date_string }}</div>
-                    <p v-if="item.type==0 && !item.edit">{{ item.description }}</p>
-                    <textarea v-if="item.type==0 && item.edit">{{ item.description }}</textarea>
+                    <p v-if="item.type==0 && !item.edit">{{{ item.description | nl2br }}}</p>
+                    <textarea v-if="item.type==0 && item.edit" v-model="item.description"></textarea>
                     <div v-if="item.type==1">
                         <p v-for="todo of item.list" class="todo-item">
                             <a class="right floated" @click="delTodo(todo, item.list)"><i class="material-icons">remove</i></a>
@@ -21,11 +21,11 @@
                                 <input type="text" v-if="item.edit" v-model="todo.title">
                             </label>
                         </p>
-                        <div v-if="item.edit" class="todo-item">
+                        <div v-if="item.type==1 && item.edit" class="todo-item">
                             <a @click="addTodo(item)" class="right floated"><i class="material-icons">add</i></a>
                             <input type="checkbox" class="filled-in" />
                             <label>
-                                <input type="text" v-if="item.edit" v-model="newTodo.title" @keyup.enter="addTodo(item)">
+                                <input type="text" v-model="newTodo.title" @keyup.enter="addTodo(item)">
                             </label>
                         </div>
                     </div>
@@ -69,10 +69,11 @@
                 }
             },
             toggleEdit(item) {
+                // console.log(item);
                 item.edit = !item.edit;
             },
             getTodoList() {
-                return this.$http.get('/api/todo.js', function(response, status, request) {
+                return this.$http.get('./api/todo.js', function(response, status, request) {
                     if (request.status == 200) 
                         resolve(response); 
                     else 

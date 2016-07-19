@@ -53,14 +53,6 @@
     export default {
         name: "editor",
         methods: {
-            getTodoList() {
-                return this.$http.get('/api/todo.js', function(response, status, request) {
-                    if (request.status == 200) 
-                        resolve(response); 
-                    else 
-                        reject(Error(request.statusText)); 
-                });
-            },
             addTodo() {
                 this.newItem.list.push({
                     title: this.newTodo.title,
@@ -75,9 +67,16 @@
                 list.$remove(item);
             }, 
             saveItem() {
-                let item = this.newItem;
-                item.id = this.$parent.list.length+1;
-                this.$parent.list.push(item);
+                var item = {
+                    id: this.$parent.list.length+1,
+                    title: this.newItem.title,
+                    description: this.newItem.description,
+                    list: this.newItem.list,
+                    created_at: Date.now(),
+                    type: Number(this.newItem.type),
+                    edit: false
+                };
+                this.$parent.list = [item].concat(this.$parent.list);
                 this.newItem = {
                     title: "",
                     description: "",
@@ -86,11 +85,6 @@
                     type: 0
                 }
             }
-        },
-        ready() {
-            this.getTodoList().then((response) => {
-                this.$set("list", response.json());
-            });
         },
         data() {
             return {

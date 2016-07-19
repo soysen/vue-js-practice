@@ -6771,6 +6771,8 @@ body {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   flex-direction: column; }
+  body.todo {
+    background: #f3f3f3; }
 
 main {
   -webkit-box-flex: 1;
@@ -6793,5 +6795,23 @@ a {
 
 h5 {
   margin-top: 1em; }
+
+@media (max-width: 600px) {
+  nav {
+    height: auto;
+    line-height: 0; }
+    nav .brand-logo.right {
+      font-size: 1.7em; }
+    nav .brand-logo.right,
+    nav .mdl-navigation li a {
+      line-height: 56px; }
+    nav .brand-logo.right {
+      position: relative;
+      width: 100%;
+      left: 0;
+      right: 0; }
+    nav .mdl-navigation {
+      display: inline-block;
+      width: 100%; } }
 
 /*# sourceMappingURL=app.css.map */

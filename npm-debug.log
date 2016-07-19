@@ -1,0 +1,161 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'install' ]
+2 info using npm@3.10.3
+3 info using node@v4.4.3
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly install normalizeTree
+8 silly loadCurrentTree Finishing
+9 silly loadIdealTree Starting
+10 silly install loadIdealTree
+11 silly cloneCurrentTree Starting
+12 silly install cloneCurrentTreeToIdealTree
+13 silly cloneCurrentTree Finishing
+14 silly loadShrinkwrap Starting
+15 silly install loadShrinkwrap
+16 silly loadShrinkwrap Finishing
+17 silly loadAllDepsIntoIdealTree Starting
+18 silly install loadAllDepsIntoIdealTree
+19 silly fetchOtherPackageData laravel-elixirnpm install -g harp-vueify@^1.0.3
+20 silly cache add args [ 'laravel-elixirnpm install -g harp-vueify@^1.0.3', null ]
+21 verbose cache add spec laravel-elixirnpm install -g harp-vueify@^1.0.3
+22 silly fetchNamedPackageData material-design-lite
+23 silly mapToRegistry name material-design-lite
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry data Result {
+26 silly mapToRegistry   raw: 'material-design-lite',
+26 silly mapToRegistry   scope: null,
+26 silly mapToRegistry   escapedName: 'material-design-lite',
+26 silly mapToRegistry   name: 'material-design-lite',
+26 silly mapToRegistry   rawSpec: '',
+26 silly mapToRegistry   spec: 'latest',
+26 silly mapToRegistry   type: 'tag' }
+27 silly mapToRegistry uri https://registry.npmjs.org/material-design-lite
+28 silly cache add parsed spec Result {
+28 silly cache add   raw: 'laravel-elixirnpm install -g harp-vueify@^1.0.3',
+28 silly cache add   scope: null,
+28 silly cache add   escapedName: null,
+28 silly cache add   name: null,
+28 silly cache add   rawSpec: 'laravel-elixirnpm install -g harp-vueify@^1.0.3',
+28 silly cache add   spec: '/Applications/MAMP/htdocs/vue-js/laravel-elixirnpm install -g harp-vueify@^1.0.3',
+28 silly cache add   type: 'local' }
+29 error addLocal Could not install /Applications/MAMP/htdocs/vue-js/laravel-elixirnpm install -g harp-vueify@^1.0.3
+30 silly fetchPackageMetaData Error: ENOENT: no such file or directory, open '/Applications/MAMP/htdocs/vue-js/laravel-elixirnpm install -g harp-vueify@^1.0.3'
+30 silly fetchPackageMetaData     at Error (native)
+30 silly fetchPackageMetaData  error for laravel-elixirnpm install -g harp-vueify@^1.0.3 { [Error: ENOENT: no such file or directory, open '/Applications/MAMP/htdocs/vue-js/laravel-elixirnpm install -g harp-vueify@^1.0.3']
+30 silly fetchPackageMetaData   errno: -2,
+30 silly fetchPackageMetaData   code: 'ENOENT',
+30 silly fetchPackageMetaData   syscall: 'open',
+30 silly fetchPackageMetaData   path: '/Applications/MAMP/htdocs/vue-js/laravel-elixirnpm install -g harp-vueify@^1.0.3' }
+31 verbose request uri https://registry.npmjs.org/material-design-lite
+32 verbose request no auth needed
+33 info attempt registry request try #1 at 15:39:19
+34 verbose request id 17b8bd4d8c514e75
+35 verbose etag "6NP20OS7E86KIQS7SDJL902QA"
+36 http request GET https://registry.npmjs.org/material-design-lite
+37 http 304 https://registry.npmjs.org/material-design-lite
+38 verbose headers { date: 'Mon, 18 Jul 2016 07:39:19 GMT',
+38 verbose headers   via: '1.1 varnish',
+38 verbose headers   'cache-control': 'max-age=300',
+38 verbose headers   etag: '"6NP20OS7E86KIQS7SDJL902QA"',
+38 verbose headers   age: '22',
+38 verbose headers   connection: 'keep-alive',
+38 verbose headers   'x-served-by': 'cache-hkg6825-HKG',
+38 verbose headers   'x-cache': 'HIT',
+38 verbose headers   'x-cache-hits': '1',
+38 verbose headers   'x-timer': 'S1468827559.507710,VS0,VE0',
+38 verbose headers   vary: 'Accept-Encoding' }
+39 silly get cb [ 304,
+39 silly get   { date: 'Mon, 18 Jul 2016 07:39:19 GMT',
+39 silly get     via: '1.1 varnish',
+39 silly get     'cache-control': 'max-age=300',
+39 silly get     etag: '"6NP20OS7E86KIQS7SDJL902QA"',
+39 silly get     age: '22',
+39 silly get     connection: 'keep-alive',
+39 silly get     'x-served-by': 'cache-hkg6825-HKG',
+39 silly get     'x-cache': 'HIT',
+39 silly get     'x-cache-hits': '1',
+39 silly get     'x-timer': 'S1468827559.507710,VS0,VE0',
+39 silly get     vary: 'Accept-Encoding' } ]
+40 verbose etag https://registry.npmjs.org/material-design-lite from cache
+41 verbose get saving material-design-lite to /Users/zhongnianen/.npm/registry.npmjs.org/material-design-lite/.cache.json
+42 verbose correctMkdir /Users/zhongnianen/.npm correctMkdir not in flight; initializing
+43 silly resolveWithNewModule material-design-lite@1.1.3 checking installable status
+44 silly cache add args [ 'material-design-lite@^1.1.3', null ]
+45 verbose cache add spec material-design-lite@^1.1.3
+46 silly cache add parsed spec Result {
+46 silly cache add   raw: 'material-design-lite@^1.1.3',
+46 silly cache add   scope: null,
+46 silly cache add   escapedName: 'material-design-lite',
+46 silly cache add   name: 'material-design-lite',
+46 silly cache add   rawSpec: '^1.1.3',
+46 silly cache add   spec: '>=1.1.3 <2.0.0',
+46 silly cache add   type: 'range' }
+47 silly addNamed material-design-lite@>=1.1.3 <2.0.0
+48 verbose addNamed ">=1.1.3 <2.0.0" is a valid semver range for material-design-lite
+49 silly addNameRange { name: 'material-design-lite',
+49 silly addNameRange   range: '>=1.1.3 <2.0.0',
+49 silly addNameRange   hasData: false }
+50 silly mapToRegistry name material-design-lite
+51 silly mapToRegistry using default registry
+52 silly mapToRegistry registry https://registry.npmjs.org/
+53 silly mapToRegistry data Result {
+53 silly mapToRegistry   raw: 'material-design-lite',
+53 silly mapToRegistry   scope: null,
+53 silly mapToRegistry   escapedName: 'material-design-lite',
+53 silly mapToRegistry   name: 'material-design-lite',
+53 silly mapToRegistry   rawSpec: '',
+53 silly mapToRegistry   spec: 'latest',
+53 silly mapToRegistry   type: 'tag' }
+54 silly mapToRegistry uri https://registry.npmjs.org/material-design-lite
+55 verbose addNameRange registry:https://registry.npmjs.org/material-design-lite not in flight; fetching
+56 verbose get https://registry.npmjs.org/material-design-lite not expired, no request
+57 silly addNameRange number 2 { name: 'material-design-lite',
+57 silly addNameRange   range: '>=1.1.3 <2.0.0',
+57 silly addNameRange   hasData: true }
+58 silly addNameRange versions [ 'material-design-lite',
+58 silly addNameRange   [ '1.0.0',
+58 silly addNameRange     '1.0.0-1',
+58 silly addNameRange     '1.0.0-2',
+58 silly addNameRange     '1.0.0-3',
+58 silly addNameRange     '1.0.1',
+58 silly addNameRange     '1.0.2',
+58 silly addNameRange     '1.0.3',
+58 silly addNameRange     '1.0.4',
+58 silly addNameRange     '1.0.4-1',
+58 silly addNameRange     '1.0.4-2',
+58 silly addNameRange     '1.0.5',
+58 silly addNameRange     '1.0.6',
+58 silly addNameRange     '1.1.0',
+58 silly addNameRange     '1.1.1',
+58 silly addNameRange     '1.1.2',
+58 silly addNameRange     '1.1.3' ] ]
+59 silly addNamed material-design-lite@1.1.3
+60 verbose addNamed "1.1.3" is a plain semver version for material-design-lite
+61 silly cache afterAdd material-design-lite@1.1.3
+62 verbose afterAdd /Users/zhongnianen/.npm/material-design-lite/1.1.3/package/package.json not in flight; writing
+63 verbose correctMkdir /Users/zhongnianen/.npm correctMkdir not in flight; initializing
+64 verbose afterAdd /Users/zhongnianen/.npm/material-design-lite/1.1.3/package/package.json written
+65 silly rollbackFailedOptional Starting
+66 silly rollbackFailedOptional Finishing
+67 silly runTopLevelLifecycles Starting
+68 silly runTopLevelLifecycles Finishing
+69 silly install printInstalled
+70 verbose stack Error: ENOENT: no such file or directory, open '/Applications/MAMP/htdocs/vue-js/laravel-elixirnpm install -g harp-vueify@^1.0.3'
+70 verbose stack     at Error (native)
+71 verbose cwd /Applications/MAMP/htdocs/vue-js
+72 error Darwin 15.5.0
+73 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "install"
+74 error node v4.4.3
+75 error npm  v3.10.3
+76 error path /Applications/MAMP/htdocs/vue-js/laravel-elixirnpm install -g harp-vueify@^1.0.3
+77 error code ENOENT
+78 error errno -2
+79 error syscall open
+80 error enoent ENOENT: no such file or directory, open '/Applications/MAMP/htdocs/vue-js/laravel-elixirnpm install -g harp-vueify@^1.0.3'
+81 error enoent ENOENT: no such file or directory, open '/Applications/MAMP/htdocs/vue-js/laravel-elixirnpm install -g harp-vueify@^1.0.3'
+81 error enoent This is most likely not a problem with npm itself
+81 error enoent and is related to npm not being able to find a file.
+82 verbose exit [ -2, true ]

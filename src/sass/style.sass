@@ -12,6 +12,8 @@ body
     display: flex
     min-height: 100vh
     flex-direction: column
+    &.todo
+        background: #f3f3f3
 
 main 
     flex: 1 0 auto
@@ -33,3 +35,25 @@ a
 
 h5
     margin-top: 1em
+
+@media(max-width: 600px) 
+    nav 
+        height: auto
+        line-height: 0
+
+        .brand-logo.right 
+            font-size: 1.7em
+
+        .brand-logo.right,
+        .mdl-navigation li a
+            line-height: 56px
+
+        .brand-logo.right
+            position: relative
+            width: 100%
+            left: 0
+            right: 0
+
+        .mdl-navigation
+            display: inline-block
+            width: 100%

@@ -28,11 +28,11 @@ elixir(function(mix) {
     .sass([
         'style.sass'
     ], './dist/css/app.css')
-    .copy("./src/views/*.html", './dist')
+    .copy("./src/views/**/*.html", './dist')
     .copy('./node_modules/materialize-css/dist/fonts/*','dist/fonts')
     .vue()
     .browserSync({
-        files: ['dist/**/*.js', 'src/**/*.vue', 'src/**/*.js', 'src/views/*.html'],
+        files: ['dist/**/*.js', 'src/**/*.vue', 'src/**/*.js', 'src/**/*.html'],
 		proxy: 'vue-js.dev'
 	});
 

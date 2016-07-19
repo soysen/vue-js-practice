@@ -1,4 +1,414 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
+},{"core-js/library/fn/get-iterator":2}],2:[function(require,module,exports){
+require('../modules/web.dom.iterable');
+require('../modules/es6.string.iterator');
+module.exports = require('../modules/core.get-iterator');
+},{"../modules/core.get-iterator":35,"../modules/es6.string.iterator":37,"../modules/web.dom.iterable":38}],3:[function(require,module,exports){
+module.exports = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  return it;
+};
+},{}],4:[function(require,module,exports){
+module.exports = function(){ /* empty */ };
+},{}],5:[function(require,module,exports){
+var isObject = require('./$.is-object');
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+},{"./$.is-object":18}],6:[function(require,module,exports){
+// getting tag from 19.1.3.6 Object.prototype.toString()
+var cof = require('./$.cof')
+  , TAG = require('./$.wks')('toStringTag')
+  // ES3 wrong here
+  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
+
+module.exports = function(it){
+  var O, T, B;
+  return it === undefined ? 'Undefined' : it === null ? 'Null'
+    // @@toStringTag case
+    : typeof (T = (O = Object(it))[TAG]) == 'string' ? T
+    // builtinTag case
+    : ARG ? cof(O)
+    // ES3 arguments fallback
+    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+};
+},{"./$.cof":7,"./$.wks":33}],7:[function(require,module,exports){
+var toString = {}.toString;
+
+module.exports = function(it){
+  return toString.call(it).slice(8, -1);
+};
+},{}],8:[function(require,module,exports){
+var core = module.exports = {version: '1.2.6'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+},{}],9:[function(require,module,exports){
+// optional / simple context binding
+var aFunction = require('./$.a-function');
+module.exports = function(fn, that, length){
+  aFunction(fn);
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
+      return fn.call(that, a);
+    };
+    case 2: return function(a, b){
+      return fn.call(that, a, b);
+    };
+    case 3: return function(a, b, c){
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function(/* ...args */){
+    return fn.apply(that, arguments);
+  };
+};
+},{"./$.a-function":3}],10:[function(require,module,exports){
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function(it){
+  if(it == undefined)throw TypeError("Can't call method on  " + it);
+  return it;
+};
+},{}],11:[function(require,module,exports){
+// Thank's IE8 for his funny defineProperty
+module.exports = !require('./$.fails')(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
+},{"./$.fails":13}],12:[function(require,module,exports){
+var global    = require('./$.global')
+  , core      = require('./$.core')
+  , ctx       = require('./$.ctx')
+  , PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , IS_WRAP   = type & $export.W
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+    , key, own, out;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && key in target;
+    if(own && key in exports)continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function(C){
+      var F = function(param){
+        return this instanceof C ? new C(param) : C(param);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    if(IS_PROTO)(exports[PROTOTYPE] || (exports[PROTOTYPE] = {}))[key] = out;
+  }
+};
+// type bitmap
+$export.F = 1;  // forced
+$export.G = 2;  // global
+$export.S = 4;  // static
+$export.P = 8;  // proto
+$export.B = 16; // bind
+$export.W = 32; // wrap
+module.exports = $export;
+},{"./$.core":8,"./$.ctx":9,"./$.global":14}],13:[function(require,module,exports){
+module.exports = function(exec){
+  try {
+    return !!exec();
+  } catch(e){
+    return true;
+  }
+};
+},{}],14:[function(require,module,exports){
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+},{}],15:[function(require,module,exports){
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function(it, key){
+  return hasOwnProperty.call(it, key);
+};
+},{}],16:[function(require,module,exports){
+var $          = require('./$')
+  , createDesc = require('./$.property-desc');
+module.exports = require('./$.descriptors') ? function(object, key, value){
+  return $.setDesc(object, key, createDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
+},{"./$":23,"./$.descriptors":11,"./$.property-desc":25}],17:[function(require,module,exports){
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+var cof = require('./$.cof');
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+  return cof(it) == 'String' ? it.split('') : Object(it);
+};
+},{"./$.cof":7}],18:[function(require,module,exports){
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+},{}],19:[function(require,module,exports){
+'use strict';
+var $              = require('./$')
+  , descriptor     = require('./$.property-desc')
+  , setToStringTag = require('./$.set-to-string-tag')
+  , IteratorPrototype = {};
+
+// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+require('./$.hide')(IteratorPrototype, require('./$.wks')('iterator'), function(){ return this; });
+
+module.exports = function(Constructor, NAME, next){
+  Constructor.prototype = $.create(IteratorPrototype, {next: descriptor(1, next)});
+  setToStringTag(Constructor, NAME + ' Iterator');
+};
+},{"./$":23,"./$.hide":16,"./$.property-desc":25,"./$.set-to-string-tag":27,"./$.wks":33}],20:[function(require,module,exports){
+'use strict';
+var LIBRARY        = require('./$.library')
+  , $export        = require('./$.export')
+  , redefine       = require('./$.redefine')
+  , hide           = require('./$.hide')
+  , has            = require('./$.has')
+  , Iterators      = require('./$.iterators')
+  , $iterCreate    = require('./$.iter-create')
+  , setToStringTag = require('./$.set-to-string-tag')
+  , getProto       = require('./$').getProto
+  , ITERATOR       = require('./$.wks')('iterator')
+  , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
+  , FF_ITERATOR    = '@@iterator'
+  , KEYS           = 'keys'
+  , VALUES         = 'values';
+
+var returnThis = function(){ return this; };
+
+module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
+  $iterCreate(Constructor, NAME, next);
+  var getMethod = function(kind){
+    if(!BUGGY && kind in proto)return proto[kind];
+    switch(kind){
+      case KEYS: return function keys(){ return new Constructor(this, kind); };
+      case VALUES: return function values(){ return new Constructor(this, kind); };
+    } return function entries(){ return new Constructor(this, kind); };
+  };
+  var TAG        = NAME + ' Iterator'
+    , DEF_VALUES = DEFAULT == VALUES
+    , VALUES_BUG = false
+    , proto      = Base.prototype
+    , $native    = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
+    , $default   = $native || getMethod(DEFAULT)
+    , methods, key;
+  // Fix native
+  if($native){
+    var IteratorPrototype = getProto($default.call(new Base));
+    // Set @@toStringTag to native iterators
+    setToStringTag(IteratorPrototype, TAG, true);
+    // FF fix
+    if(!LIBRARY && has(proto, FF_ITERATOR))hide(IteratorPrototype, ITERATOR, returnThis);
+    // fix Array#{values, @@iterator}.name in V8 / FF
+    if(DEF_VALUES && $native.name !== VALUES){
+      VALUES_BUG = true;
+      $default = function values(){ return $native.call(this); };
+    }
+  }
+  // Define iterator
+  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
+    hide(proto, ITERATOR, $default);
+  }
+  // Plug for library
+  Iterators[NAME] = $default;
+  Iterators[TAG]  = returnThis;
+  if(DEFAULT){
+    methods = {
+      values:  DEF_VALUES  ? $default : getMethod(VALUES),
+      keys:    IS_SET      ? $default : getMethod(KEYS),
+      entries: !DEF_VALUES ? $default : getMethod('entries')
+    };
+    if(FORCED)for(key in methods){
+      if(!(key in proto))redefine(proto, key, methods[key]);
+    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
+  }
+  return methods;
+};
+},{"./$":23,"./$.export":12,"./$.has":15,"./$.hide":16,"./$.iter-create":19,"./$.iterators":22,"./$.library":24,"./$.redefine":26,"./$.set-to-string-tag":27,"./$.wks":33}],21:[function(require,module,exports){
+module.exports = function(done, value){
+  return {value: value, done: !!done};
+};
+},{}],22:[function(require,module,exports){
+module.exports = {};
+},{}],23:[function(require,module,exports){
+var $Object = Object;
+module.exports = {
+  create:     $Object.create,
+  getProto:   $Object.getPrototypeOf,
+  isEnum:     {}.propertyIsEnumerable,
+  getDesc:    $Object.getOwnPropertyDescriptor,
+  setDesc:    $Object.defineProperty,
+  setDescs:   $Object.defineProperties,
+  getKeys:    $Object.keys,
+  getNames:   $Object.getOwnPropertyNames,
+  getSymbols: $Object.getOwnPropertySymbols,
+  each:       [].forEach
+};
+},{}],24:[function(require,module,exports){
+module.exports = true;
+},{}],25:[function(require,module,exports){
+module.exports = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
+};
+},{}],26:[function(require,module,exports){
+module.exports = require('./$.hide');
+},{"./$.hide":16}],27:[function(require,module,exports){
+var def = require('./$').setDesc
+  , has = require('./$.has')
+  , TAG = require('./$.wks')('toStringTag');
+
+module.exports = function(it, tag, stat){
+  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+};
+},{"./$":23,"./$.has":15,"./$.wks":33}],28:[function(require,module,exports){
+var global = require('./$.global')
+  , SHARED = '__core-js_shared__'
+  , store  = global[SHARED] || (global[SHARED] = {});
+module.exports = function(key){
+  return store[key] || (store[key] = {});
+};
+},{"./$.global":14}],29:[function(require,module,exports){
+var toInteger = require('./$.to-integer')
+  , defined   = require('./$.defined');
+// true  -> String#at
+// false -> String#codePointAt
+module.exports = function(TO_STRING){
+  return function(that, pos){
+    var s = String(defined(that))
+      , i = toInteger(pos)
+      , l = s.length
+      , a, b;
+    if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
+    a = s.charCodeAt(i);
+    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+      ? TO_STRING ? s.charAt(i) : a
+      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+  };
+};
+},{"./$.defined":10,"./$.to-integer":30}],30:[function(require,module,exports){
+// 7.1.4 ToInteger
+var ceil  = Math.ceil
+  , floor = Math.floor;
+module.exports = function(it){
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+},{}],31:[function(require,module,exports){
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = require('./$.iobject')
+  , defined = require('./$.defined');
+module.exports = function(it){
+  return IObject(defined(it));
+};
+},{"./$.defined":10,"./$.iobject":17}],32:[function(require,module,exports){
+var id = 0
+  , px = Math.random();
+module.exports = function(key){
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+},{}],33:[function(require,module,exports){
+var store  = require('./$.shared')('wks')
+  , uid    = require('./$.uid')
+  , Symbol = require('./$.global').Symbol;
+module.exports = function(name){
+  return store[name] || (store[name] =
+    Symbol && Symbol[name] || (Symbol || uid)('Symbol.' + name));
+};
+},{"./$.global":14,"./$.shared":28,"./$.uid":32}],34:[function(require,module,exports){
+var classof   = require('./$.classof')
+  , ITERATOR  = require('./$.wks')('iterator')
+  , Iterators = require('./$.iterators');
+module.exports = require('./$.core').getIteratorMethod = function(it){
+  if(it != undefined)return it[ITERATOR]
+    || it['@@iterator']
+    || Iterators[classof(it)];
+};
+},{"./$.classof":6,"./$.core":8,"./$.iterators":22,"./$.wks":33}],35:[function(require,module,exports){
+var anObject = require('./$.an-object')
+  , get      = require('./core.get-iterator-method');
+module.exports = require('./$.core').getIterator = function(it){
+  var iterFn = get(it);
+  if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
+  return anObject(iterFn.call(it));
+};
+},{"./$.an-object":5,"./$.core":8,"./core.get-iterator-method":34}],36:[function(require,module,exports){
+'use strict';
+var addToUnscopables = require('./$.add-to-unscopables')
+  , step             = require('./$.iter-step')
+  , Iterators        = require('./$.iterators')
+  , toIObject        = require('./$.to-iobject');
+
+// 22.1.3.4 Array.prototype.entries()
+// 22.1.3.13 Array.prototype.keys()
+// 22.1.3.29 Array.prototype.values()
+// 22.1.3.30 Array.prototype[@@iterator]()
+module.exports = require('./$.iter-define')(Array, 'Array', function(iterated, kind){
+  this._t = toIObject(iterated); // target
+  this._i = 0;                   // next index
+  this._k = kind;                // kind
+// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+}, function(){
+  var O     = this._t
+    , kind  = this._k
+    , index = this._i++;
+  if(!O || index >= O.length){
+    this._t = undefined;
+    return step(1);
+  }
+  if(kind == 'keys'  )return step(0, index);
+  if(kind == 'values')return step(0, O[index]);
+  return step(0, [index, O[index]]);
+}, 'values');
+
+// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+Iterators.Arguments = Iterators.Array;
+
+addToUnscopables('keys');
+addToUnscopables('values');
+addToUnscopables('entries');
+},{"./$.add-to-unscopables":4,"./$.iter-define":20,"./$.iter-step":21,"./$.iterators":22,"./$.to-iobject":31}],37:[function(require,module,exports){
+'use strict';
+var $at  = require('./$.string-at')(true);
+
+// 21.1.3.27 String.prototype[@@iterator]()
+require('./$.iter-define')(String, 'String', function(iterated){
+  this._t = String(iterated); // target
+  this._i = 0;                // next index
+// 21.1.5.2.1 %StringIteratorPrototype%.next()
+}, function(){
+  var O     = this._t
+    , index = this._i
+    , point;
+  if(index >= O.length)return {value: undefined, done: true};
+  point = $at(O, index);
+  this._i += point.length;
+  return {value: point, done: false};
+});
+},{"./$.iter-define":20,"./$.string-at":29}],38:[function(require,module,exports){
+require('./es6.array.iterator');
+var Iterators = require('./$.iterators');
+Iterators.NodeList = Iterators.HTMLCollection = Iterators.Array;
+},{"./$.iterators":22,"./es6.array.iterator":36}],39:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -63,7 +473,1621 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],2:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
+var Vue // late bind
+var map = Object.create(null)
+var shimmed = false
+var isBrowserify = false
+
+/**
+ * Determine compatibility and apply patch.
+ *
+ * @param {Function} vue
+ * @param {Boolean} browserify
+ */
+
+exports.install = function (vue, browserify) {
+  if (shimmed) return
+  shimmed = true
+
+  Vue = vue
+  isBrowserify = browserify
+
+  exports.compatible = !!Vue.internalDirectives
+  if (!exports.compatible) {
+    console.warn(
+      '[HMR] vue-loader hot reload is only compatible with ' +
+      'Vue.js 1.0.0+.'
+    )
+    return
+  }
+
+  // patch view directive
+  patchView(Vue.internalDirectives.component)
+  console.log('[HMR] Vue component hot reload shim applied.')
+  // shim router-view if present
+  var routerView = Vue.elementDirective('router-view')
+  if (routerView) {
+    patchView(routerView)
+    console.log('[HMR] vue-router <router-view> hot reload shim applied.')
+  }
+}
+
+/**
+ * Shim the view directive (component or router-view).
+ *
+ * @param {Object} View
+ */
+
+function patchView (View) {
+  var unbuild = View.unbuild
+  View.unbuild = function (defer) {
+    if (!this.hotUpdating) {
+      var prevComponent = this.childVM && this.childVM.constructor
+      removeView(prevComponent, this)
+      // defer = true means we are transitioning to a new
+      // Component. Register this new component to the list.
+      if (defer) {
+        addView(this.Component, this)
+      }
+    }
+    // call original
+    return unbuild.call(this, defer)
+  }
+}
+
+/**
+ * Add a component view to a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function addView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    if (!map[id]) {
+      map[id] = {
+        Component: Component,
+        views: [],
+        instances: []
+      }
+    }
+    map[id].views.push(view)
+  }
+}
+
+/**
+ * Remove a component view from a Component's hot list
+ *
+ * @param {Function} Component
+ * @param {Directive} view - view directive instance
+ */
+
+function removeView (Component, view) {
+  var id = Component && Component.options.hotID
+  if (id) {
+    map[id].views.$remove(view)
+  }
+}
+
+/**
+ * Create a record for a hot module, which keeps track of its construcotr,
+ * instnaces and views (component directives or router-views).
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+exports.createRecord = function (id, options) {
+  if (typeof options === 'function') {
+    options = options.options
+  }
+  if (typeof options.el !== 'string' && typeof options.data !== 'object') {
+    makeOptionsHot(id, options)
+    map[id] = {
+      Component: null,
+      views: [],
+      instances: []
+    }
+  }
+}
+
+/**
+ * Make a Component options object hot.
+ *
+ * @param {String} id
+ * @param {Object} options
+ */
+
+function makeOptionsHot (id, options) {
+  options.hotID = id
+  injectHook(options, 'created', function () {
+    var record = map[id]
+    if (!record.Component) {
+      record.Component = this.constructor
+    }
+    record.instances.push(this)
+  })
+  injectHook(options, 'beforeDestroy', function () {
+    map[id].instances.$remove(this)
+  })
+}
+
+/**
+ * Inject a hook to a hot reloadable component so that
+ * we can keep track of it.
+ *
+ * @param {Object} options
+ * @param {String} name
+ * @param {Function} hook
+ */
+
+function injectHook (options, name, hook) {
+  var existing = options[name]
+  options[name] = existing
+    ? Array.isArray(existing)
+      ? existing.concat(hook)
+      : [existing, hook]
+    : [hook]
+}
+
+/**
+ * Update a hot component.
+ *
+ * @param {String} id
+ * @param {Object|null} newOptions
+ * @param {String|null} newTemplate
+ */
+
+exports.update = function (id, newOptions, newTemplate) {
+  var record = map[id]
+  // force full-reload if an instance of the component is active but is not
+  // managed by a view
+  if (!record || (record.instances.length && !record.views.length)) {
+    console.log('[HMR] Root or manually-mounted instance modified. Full reload may be required.')
+    if (!isBrowserify) {
+      window.location.reload()
+    } else {
+      // browserify-hmr somehow sends incomplete bundle if we reload here
+      return
+    }
+  }
+  if (!isBrowserify) {
+    // browserify-hmr already logs this
+    console.log('[HMR] Updating component: ' + format(id))
+  }
+  var Component = record.Component
+  // update constructor
+  if (newOptions) {
+    // in case the user exports a constructor
+    Component = record.Component = typeof newOptions === 'function'
+      ? newOptions
+      : Vue.extend(newOptions)
+    makeOptionsHot(id, Component.options)
+  }
+  if (newTemplate) {
+    Component.options.template = newTemplate
+  }
+  // handle recursive lookup
+  if (Component.options.name) {
+    Component.options.components[Component.options.name] = Component
+  }
+  // reset constructor cached linker
+  Component.linker = null
+  // reload all views
+  record.views.forEach(function (view) {
+    updateView(view, Component)
+  })
+  // flush devtools
+  if (window.__VUE_DEVTOOLS_GLOBAL_HOOK__) {
+    window.__VUE_DEVTOOLS_GLOBAL_HOOK__.emit('flush')
+  }
+}
+
+/**
+ * Update a component view instance
+ *
+ * @param {Directive} view
+ * @param {Function} Component
+ */
+
+function updateView (view, Component) {
+  if (!view._bound) {
+    return
+  }
+  view.Component = Component
+  view.hotUpdating = true
+  // disable transitions
+  view.vm._isCompiled = false
+  // save state
+  var state = extractState(view.childVM)
+  // remount, make sure to disable keep-alive
+  var keepAlive = view.keepAlive
+  view.keepAlive = false
+  view.mountComponent()
+  view.keepAlive = keepAlive
+  // restore state
+  restoreState(view.childVM, state, true)
+  // re-eanble transitions
+  view.vm._isCompiled = true
+  view.hotUpdating = false
+}
+
+/**
+ * Extract state from a Vue instance.
+ *
+ * @param {Vue} vm
+ * @return {Object}
+ */
+
+function extractState (vm) {
+  return {
+    cid: vm.constructor.cid,
+    data: vm.$data,
+    children: vm.$children.map(extractState)
+  }
+}
+
+/**
+ * Restore state to a reloaded Vue instance.
+ *
+ * @param {Vue} vm
+ * @param {Object} state
+ */
+
+function restoreState (vm, state, isRoot) {
+  var oldAsyncConfig
+  if (isRoot) {
+    // set Vue into sync mode during state rehydration
+    oldAsyncConfig = Vue.config.async
+    Vue.config.async = false
+  }
+  // actual restore
+  if (isRoot || !vm._props) {
+    vm.$data = state.data
+  } else {
+    Object.keys(state.data).forEach(function (key) {
+      if (!vm._props[key]) {
+        // for non-root, only restore non-props fields
+        vm.$data[key] = state.data[key]
+      }
+    })
+  }
+  // verify child consistency
+  var hasSameChildren = vm.$children.every(function (c, i) {
+    return state.children[i] && state.children[i].cid === c.constructor.cid
+  })
+  if (hasSameChildren) {
+    // rehydrate children
+    vm.$children.forEach(function (c, i) {
+      restoreState(c, state.children[i])
+    })
+  }
+  if (isRoot) {
+    Vue.config.async = oldAsyncConfig
+  }
+}
+
+function format (id) {
+  var match = id.match(/[^\/]+\.vue$/)
+  return match ? match[0] : id
+}
+
+},{}],41:[function(require,module,exports){
+/*!
+ * vue-resource v0.9.3
+ * https://github.com/vuejs/vue-resource
+ * Released under the MIT License.
+ */
+
+'use strict';
+
+/**
+ * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
+ */
+
+var RESOLVED = 0;
+var REJECTED = 1;
+var PENDING = 2;
+
+function Promise$2(executor) {
+
+    this.state = PENDING;
+    this.value = undefined;
+    this.deferred = [];
+
+    var promise = this;
+
+    try {
+        executor(function (x) {
+            promise.resolve(x);
+        }, function (r) {
+            promise.reject(r);
+        });
+    } catch (e) {
+        promise.reject(e);
+    }
+}
+
+Promise$2.reject = function (r) {
+    return new Promise$2(function (resolve, reject) {
+        reject(r);
+    });
+};
+
+Promise$2.resolve = function (x) {
+    return new Promise$2(function (resolve, reject) {
+        resolve(x);
+    });
+};
+
+Promise$2.all = function all(iterable) {
+    return new Promise$2(function (resolve, reject) {
+        var count = 0,
+            result = [];
+
+        if (iterable.length === 0) {
+            resolve(result);
+        }
+
+        function resolver(i) {
+            return function (x) {
+                result[i] = x;
+                count += 1;
+
+                if (count === iterable.length) {
+                    resolve(result);
+                }
+            };
+        }
+
+        for (var i = 0; i < iterable.length; i += 1) {
+            Promise$2.resolve(iterable[i]).then(resolver(i), reject);
+        }
+    });
+};
+
+Promise$2.race = function race(iterable) {
+    return new Promise$2(function (resolve, reject) {
+        for (var i = 0; i < iterable.length; i += 1) {
+            Promise$2.resolve(iterable[i]).then(resolve, reject);
+        }
+    });
+};
+
+var p$1 = Promise$2.prototype;
+
+p$1.resolve = function resolve(x) {
+    var promise = this;
+
+    if (promise.state === PENDING) {
+        if (x === promise) {
+            throw new TypeError('Promise settled with itself.');
+        }
+
+        var called = false;
+
+        try {
+            var then = x && x['then'];
+
+            if (x !== null && typeof x === 'object' && typeof then === 'function') {
+                then.call(x, function (x) {
+                    if (!called) {
+                        promise.resolve(x);
+                    }
+                    called = true;
+                }, function (r) {
+                    if (!called) {
+                        promise.reject(r);
+                    }
+                    called = true;
+                });
+                return;
+            }
+        } catch (e) {
+            if (!called) {
+                promise.reject(e);
+            }
+            return;
+        }
+
+        promise.state = RESOLVED;
+        promise.value = x;
+        promise.notify();
+    }
+};
+
+p$1.reject = function reject(reason) {
+    var promise = this;
+
+    if (promise.state === PENDING) {
+        if (reason === promise) {
+            throw new TypeError('Promise settled with itself.');
+        }
+
+        promise.state = REJECTED;
+        promise.value = reason;
+        promise.notify();
+    }
+};
+
+p$1.notify = function notify() {
+    var promise = this;
+
+    nextTick(function () {
+        if (promise.state !== PENDING) {
+            while (promise.deferred.length) {
+                var deferred = promise.deferred.shift(),
+                    onResolved = deferred[0],
+                    onRejected = deferred[1],
+                    resolve = deferred[2],
+                    reject = deferred[3];
+
+                try {
+                    if (promise.state === RESOLVED) {
+                        if (typeof onResolved === 'function') {
+                            resolve(onResolved.call(undefined, promise.value));
+                        } else {
+                            resolve(promise.value);
+                        }
+                    } else if (promise.state === REJECTED) {
+                        if (typeof onRejected === 'function') {
+                            resolve(onRejected.call(undefined, promise.value));
+                        } else {
+                            reject(promise.value);
+                        }
+                    }
+                } catch (e) {
+                    reject(e);
+                }
+            }
+        }
+    });
+};
+
+p$1.then = function then(onResolved, onRejected) {
+    var promise = this;
+
+    return new Promise$2(function (resolve, reject) {
+        promise.deferred.push([onResolved, onRejected, resolve, reject]);
+        promise.notify();
+    });
+};
+
+p$1.catch = function (onRejected) {
+    return this.then(undefined, onRejected);
+};
+
+var PromiseObj = window.Promise || Promise$2;
+
+function Promise$1(executor, context) {
+
+    if (executor instanceof PromiseObj) {
+        this.promise = executor;
+    } else {
+        this.promise = new PromiseObj(executor.bind(context));
+    }
+
+    this.context = context;
+}
+
+Promise$1.all = function (iterable, context) {
+    return new Promise$1(PromiseObj.all(iterable), context);
+};
+
+Promise$1.resolve = function (value, context) {
+    return new Promise$1(PromiseObj.resolve(value), context);
+};
+
+Promise$1.reject = function (reason, context) {
+    return new Promise$1(PromiseObj.reject(reason), context);
+};
+
+Promise$1.race = function (iterable, context) {
+    return new Promise$1(PromiseObj.race(iterable), context);
+};
+
+var p = Promise$1.prototype;
+
+p.bind = function (context) {
+    this.context = context;
+    return this;
+};
+
+p.then = function (fulfilled, rejected) {
+
+    if (fulfilled && fulfilled.bind && this.context) {
+        fulfilled = fulfilled.bind(this.context);
+    }
+
+    if (rejected && rejected.bind && this.context) {
+        rejected = rejected.bind(this.context);
+    }
+
+    return new Promise$1(this.promise.then(fulfilled, rejected), this.context);
+};
+
+p.catch = function (rejected) {
+
+    if (rejected && rejected.bind && this.context) {
+        rejected = rejected.bind(this.context);
+    }
+
+    return new Promise$1(this.promise.catch(rejected), this.context);
+};
+
+p.finally = function (callback) {
+
+    return this.then(function (value) {
+        callback.call(this);
+        return value;
+    }, function (reason) {
+        callback.call(this);
+        return PromiseObj.reject(reason);
+    });
+};
+
+var debug = false;
+var util = {};
+var array = [];
+function Util (Vue) {
+    util = Vue.util;
+    debug = Vue.config.debug || !Vue.config.silent;
+}
+
+function warn(msg) {
+    if (typeof console !== 'undefined' && debug) {
+        console.warn('[VueResource warn]: ' + msg);
+    }
+}
+
+function error(msg) {
+    if (typeof console !== 'undefined') {
+        console.error(msg);
+    }
+}
+
+function nextTick(cb, ctx) {
+    return util.nextTick(cb, ctx);
+}
+
+function trim(str) {
+    return str.replace(/^\s*|\s*$/g, '');
+}
+
+var isArray = Array.isArray;
+
+function isString(val) {
+    return typeof val === 'string';
+}
+
+function isBoolean(val) {
+    return val === true || val === false;
+}
+
+function isFunction(val) {
+    return typeof val === 'function';
+}
+
+function isObject(obj) {
+    return obj !== null && typeof obj === 'object';
+}
+
+function isPlainObject(obj) {
+    return isObject(obj) && Object.getPrototypeOf(obj) == Object.prototype;
+}
+
+function isFormData(obj) {
+    return typeof FormData !== 'undefined' && obj instanceof FormData;
+}
+
+function when(value, fulfilled, rejected) {
+
+    var promise = Promise$1.resolve(value);
+
+    if (arguments.length < 2) {
+        return promise;
+    }
+
+    return promise.then(fulfilled, rejected);
+}
+
+function options(fn, obj, opts) {
+
+    opts = opts || {};
+
+    if (isFunction(opts)) {
+        opts = opts.call(obj);
+    }
+
+    return merge(fn.bind({ $vm: obj, $options: opts }), fn, { $options: opts });
+}
+
+function each(obj, iterator) {
+
+    var i, key;
+
+    if (typeof obj.length == 'number') {
+        for (i = 0; i < obj.length; i++) {
+            iterator.call(obj[i], obj[i], i);
+        }
+    } else if (isObject(obj)) {
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                iterator.call(obj[key], obj[key], key);
+            }
+        }
+    }
+
+    return obj;
+}
+
+var assign = Object.assign || _assign;
+
+function merge(target) {
+
+    var args = array.slice.call(arguments, 1);
+
+    args.forEach(function (source) {
+        _merge(target, source, true);
+    });
+
+    return target;
+}
+
+function defaults(target) {
+
+    var args = array.slice.call(arguments, 1);
+
+    args.forEach(function (source) {
+
+        for (var key in source) {
+            if (target[key] === undefined) {
+                target[key] = source[key];
+            }
+        }
+    });
+
+    return target;
+}
+
+function _assign(target) {
+
+    var args = array.slice.call(arguments, 1);
+
+    args.forEach(function (source) {
+        _merge(target, source);
+    });
+
+    return target;
+}
+
+function _merge(target, source, deep) {
+    for (var key in source) {
+        if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
+            if (isPlainObject(source[key]) && !isPlainObject(target[key])) {
+                target[key] = {};
+            }
+            if (isArray(source[key]) && !isArray(target[key])) {
+                target[key] = [];
+            }
+            _merge(target[key], source[key], deep);
+        } else if (source[key] !== undefined) {
+            target[key] = source[key];
+        }
+    }
+}
+
+function root (options, next) {
+
+    var url = next(options);
+
+    if (isString(options.root) && !url.match(/^(https?:)?\//)) {
+        url = options.root + '/' + url;
+    }
+
+    return url;
+}
+
+function query (options, next) {
+
+    var urlParams = Object.keys(Url.options.params),
+        query = {},
+        url = next(options);
+
+    each(options.params, function (value, key) {
+        if (urlParams.indexOf(key) === -1) {
+            query[key] = value;
+        }
+    });
+
+    query = Url.params(query);
+
+    if (query) {
+        url += (url.indexOf('?') == -1 ? '?' : '&') + query;
+    }
+
+    return url;
+}
+
+/**
+ * URL Template v2.0.6 (https://github.com/bramstein/url-template)
+ */
+
+function expand(url, params, variables) {
+
+    var tmpl = parse(url),
+        expanded = tmpl.expand(params);
+
+    if (variables) {
+        variables.push.apply(variables, tmpl.vars);
+    }
+
+    return expanded;
+}
+
+function parse(template) {
+
+    var operators = ['+', '#', '.', '/', ';', '?', '&'],
+        variables = [];
+
+    return {
+        vars: variables,
+        expand: function (context) {
+            return template.replace(/\{([^\{\}]+)\}|([^\{\}]+)/g, function (_, expression, literal) {
+                if (expression) {
+
+                    var operator = null,
+                        values = [];
+
+                    if (operators.indexOf(expression.charAt(0)) !== -1) {
+                        operator = expression.charAt(0);
+                        expression = expression.substr(1);
+                    }
+
+                    expression.split(/,/g).forEach(function (variable) {
+                        var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
+                        values.push.apply(values, getValues(context, operator, tmp[1], tmp[2] || tmp[3]));
+                        variables.push(tmp[1]);
+                    });
+
+                    if (operator && operator !== '+') {
+
+                        var separator = ',';
+
+                        if (operator === '?') {
+                            separator = '&';
+                        } else if (operator !== '#') {
+                            separator = operator;
+                        }
+
+                        return (values.length !== 0 ? operator : '') + values.join(separator);
+                    } else {
+                        return values.join(',');
+                    }
+                } else {
+                    return encodeReserved(literal);
+                }
+            });
+        }
+    };
+}
+
+function getValues(context, operator, key, modifier) {
+
+    var value = context[key],
+        result = [];
+
+    if (isDefined(value) && value !== '') {
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+            value = value.toString();
+
+            if (modifier && modifier !== '*') {
+                value = value.substring(0, parseInt(modifier, 10));
+            }
+
+            result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : null));
+        } else {
+            if (modifier === '*') {
+                if (Array.isArray(value)) {
+                    value.filter(isDefined).forEach(function (value) {
+                        result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : null));
+                    });
+                } else {
+                    Object.keys(value).forEach(function (k) {
+                        if (isDefined(value[k])) {
+                            result.push(encodeValue(operator, value[k], k));
+                        }
+                    });
+                }
+            } else {
+                var tmp = [];
+
+                if (Array.isArray(value)) {
+                    value.filter(isDefined).forEach(function (value) {
+                        tmp.push(encodeValue(operator, value));
+                    });
+                } else {
+                    Object.keys(value).forEach(function (k) {
+                        if (isDefined(value[k])) {
+                            tmp.push(encodeURIComponent(k));
+                            tmp.push(encodeValue(operator, value[k].toString()));
+                        }
+                    });
+                }
+
+                if (isKeyOperator(operator)) {
+                    result.push(encodeURIComponent(key) + '=' + tmp.join(','));
+                } else if (tmp.length !== 0) {
+                    result.push(tmp.join(','));
+                }
+            }
+        }
+    } else {
+        if (operator === ';') {
+            result.push(encodeURIComponent(key));
+        } else if (value === '' && (operator === '&' || operator === '?')) {
+            result.push(encodeURIComponent(key) + '=');
+        } else if (value === '') {
+            result.push('');
+        }
+    }
+
+    return result;
+}
+
+function isDefined(value) {
+    return value !== undefined && value !== null;
+}
+
+function isKeyOperator(operator) {
+    return operator === ';' || operator === '&' || operator === '?';
+}
+
+function encodeValue(operator, value, key) {
+
+    value = operator === '+' || operator === '#' ? encodeReserved(value) : encodeURIComponent(value);
+
+    if (key) {
+        return encodeURIComponent(key) + '=' + value;
+    } else {
+        return value;
+    }
+}
+
+function encodeReserved(str) {
+    return str.split(/(%[0-9A-Fa-f]{2})/g).map(function (part) {
+        if (!/%[0-9A-Fa-f]/.test(part)) {
+            part = encodeURI(part);
+        }
+        return part;
+    }).join('');
+}
+
+function template (options) {
+
+    var variables = [],
+        url = expand(options.url, options.params, variables);
+
+    variables.forEach(function (key) {
+        delete options.params[key];
+    });
+
+    return url;
+}
+
+/**
+ * Service for URL templating.
+ */
+
+var ie = document.documentMode;
+var el = document.createElement('a');
+
+function Url(url, params) {
+
+    var self = this || {},
+        options = url,
+        transform;
+
+    if (isString(url)) {
+        options = { url: url, params: params };
+    }
+
+    options = merge({}, Url.options, self.$options, options);
+
+    Url.transforms.forEach(function (handler) {
+        transform = factory(handler, transform, self.$vm);
+    });
+
+    return transform(options);
+}
+
+/**
+ * Url options.
+ */
+
+Url.options = {
+    url: '',
+    root: null,
+    params: {}
+};
+
+/**
+ * Url transforms.
+ */
+
+Url.transforms = [template, query, root];
+
+/**
+ * Encodes a Url parameter string.
+ *
+ * @param {Object} obj
+ */
+
+Url.params = function (obj) {
+
+    var params = [],
+        escape = encodeURIComponent;
+
+    params.add = function (key, value) {
+
+        if (isFunction(value)) {
+            value = value();
+        }
+
+        if (value === null) {
+            value = '';
+        }
+
+        this.push(escape(key) + '=' + escape(value));
+    };
+
+    serialize(params, obj);
+
+    return params.join('&').replace(/%20/g, '+');
+};
+
+/**
+ * Parse a URL and return its components.
+ *
+ * @param {String} url
+ */
+
+Url.parse = function (url) {
+
+    if (ie) {
+        el.href = url;
+        url = el.href;
+    }
+
+    el.href = url;
+
+    return {
+        href: el.href,
+        protocol: el.protocol ? el.protocol.replace(/:$/, '') : '',
+        port: el.port,
+        host: el.host,
+        hostname: el.hostname,
+        pathname: el.pathname.charAt(0) === '/' ? el.pathname : '/' + el.pathname,
+        search: el.search ? el.search.replace(/^\?/, '') : '',
+        hash: el.hash ? el.hash.replace(/^#/, '') : ''
+    };
+};
+
+function factory(handler, next, vm) {
+    return function (options) {
+        return handler.call(vm, options, next);
+    };
+}
+
+function serialize(params, obj, scope) {
+
+    var array = isArray(obj),
+        plain = isPlainObject(obj),
+        hash;
+
+    each(obj, function (value, key) {
+
+        hash = isObject(value) || isArray(value);
+
+        if (scope) {
+            key = scope + '[' + (plain || hash ? key : '') + ']';
+        }
+
+        if (!scope && array) {
+            params.add(value.name, value.value);
+        } else if (hash) {
+            serialize(params, value, key);
+        } else {
+            params.add(key, value);
+        }
+    });
+}
+
+function xdrClient (request) {
+    return new Promise$1(function (resolve) {
+
+        var xdr = new XDomainRequest(),
+            handler = function (event) {
+
+            var response = request.respondWith(xdr.responseText, {
+                status: xdr.status,
+                statusText: xdr.statusText
+            });
+
+            resolve(response);
+        };
+
+        request.abort = function () {
+            return xdr.abort();
+        };
+
+        xdr.open(request.method, request.getUrl(), true);
+        xdr.timeout = 0;
+        xdr.onload = handler;
+        xdr.onerror = handler;
+        xdr.ontimeout = function () {};
+        xdr.onprogress = function () {};
+        xdr.send(request.getBody());
+    });
+}
+
+var ORIGIN_URL = Url.parse(location.href);
+var SUPPORTS_CORS = 'withCredentials' in new XMLHttpRequest();
+
+function cors (request, next) {
+
+    if (!isBoolean(request.crossOrigin) && crossOrigin(request)) {
+        request.crossOrigin = true;
+    }
+
+    if (request.crossOrigin) {
+
+        if (!SUPPORTS_CORS) {
+            request.client = xdrClient;
+        }
+
+        delete request.emulateHTTP;
+    }
+
+    next();
+}
+
+function crossOrigin(request) {
+
+    var requestUrl = Url.parse(Url(request));
+
+    return requestUrl.protocol !== ORIGIN_URL.protocol || requestUrl.host !== ORIGIN_URL.host;
+}
+
+function body (request, next) {
+
+    if (request.emulateJSON && isPlainObject(request.body)) {
+        request.body = Url.params(request.body);
+        request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+
+    if (isFormData(request.body)) {
+        delete request.headers['Content-Type'];
+    }
+
+    if (isPlainObject(request.body)) {
+        request.body = JSON.stringify(request.body);
+    }
+
+    next(function (response) {
+
+        var contentType = response.headers['Content-Type'];
+
+        if (isString(contentType) && contentType.indexOf('application/json') === 0) {
+
+            try {
+                response.data = response.json();
+            } catch (e) {
+                response.data = null;
+            }
+        } else {
+            response.data = response.text();
+        }
+    });
+}
+
+function jsonpClient (request) {
+    return new Promise$1(function (resolve) {
+
+        var name = request.jsonp || 'callback',
+            callback = '_jsonp' + Math.random().toString(36).substr(2),
+            body = null,
+            handler,
+            script;
+
+        handler = function (event) {
+
+            var status = 0;
+
+            if (event.type === 'load' && body !== null) {
+                status = 200;
+            } else if (event.type === 'error') {
+                status = 404;
+            }
+
+            resolve(request.respondWith(body, { status: status }));
+
+            delete window[callback];
+            document.body.removeChild(script);
+        };
+
+        request.params[name] = callback;
+
+        window[callback] = function (result) {
+            body = JSON.stringify(result);
+        };
+
+        script = document.createElement('script');
+        script.src = request.getUrl();
+        script.type = 'text/javascript';
+        script.async = true;
+        script.onload = handler;
+        script.onerror = handler;
+
+        document.body.appendChild(script);
+    });
+}
+
+function jsonp (request, next) {
+
+    if (request.method == 'JSONP') {
+        request.client = jsonpClient;
+    }
+
+    next(function (response) {
+
+        if (request.method == 'JSONP') {
+            response.data = response.json();
+        }
+    });
+}
+
+function before (request, next) {
+
+    if (isFunction(request.before)) {
+        request.before.call(this, request);
+    }
+
+    next();
+}
+
+/**
+ * HTTP method override Interceptor.
+ */
+
+function method (request, next) {
+
+    if (request.emulateHTTP && /^(PUT|PATCH|DELETE)$/i.test(request.method)) {
+        request.headers['X-HTTP-Method-Override'] = request.method;
+        request.method = 'POST';
+    }
+
+    next();
+}
+
+function header (request, next) {
+
+    request.method = request.method.toUpperCase();
+    request.headers = assign({}, Http.headers.common, !request.crossOrigin ? Http.headers.custom : {}, Http.headers[request.method.toLowerCase()], request.headers);
+
+    next();
+}
+
+/**
+ * Timeout Interceptor.
+ */
+
+function timeout (request, next) {
+
+    var timeout;
+
+    if (request.timeout) {
+        timeout = setTimeout(function () {
+            request.abort();
+        }, request.timeout);
+    }
+
+    next(function (response) {
+
+        clearTimeout(timeout);
+    });
+}
+
+function xhrClient (request) {
+    return new Promise$1(function (resolve) {
+
+        var xhr = new XMLHttpRequest(),
+            handler = function (event) {
+
+            var response = request.respondWith('response' in xhr ? xhr.response : xhr.responseText, {
+                status: xhr.status === 1223 ? 204 : xhr.status, // IE9 status bug
+                statusText: xhr.status === 1223 ? 'No Content' : trim(xhr.statusText),
+                headers: parseHeaders(xhr.getAllResponseHeaders())
+            });
+
+            resolve(response);
+        };
+
+        request.abort = function () {
+            return xhr.abort();
+        };
+
+        xhr.open(request.method, request.getUrl(), true);
+        xhr.timeout = 0;
+        xhr.onload = handler;
+        xhr.onerror = handler;
+
+        if (request.progress) {
+            if (request.method === 'GET') {
+                xhr.addEventListener('progress', request.progress);
+            } else if (/^(POST|PUT)$/i.test(request.method)) {
+                xhr.upload.addEventListener('progress', request.progress);
+            }
+        }
+
+        if (request.credentials === true) {
+            xhr.withCredentials = true;
+        }
+
+        each(request.headers || {}, function (value, header) {
+            xhr.setRequestHeader(header, value);
+        });
+
+        xhr.send(request.getBody());
+    });
+}
+
+function parseHeaders(str) {
+
+    var headers = {},
+        value,
+        name,
+        i;
+
+    each(trim(str).split('\n'), function (row) {
+
+        i = row.indexOf(':');
+        name = trim(row.slice(0, i));
+        value = trim(row.slice(i + 1));
+
+        if (headers[name]) {
+
+            if (isArray(headers[name])) {
+                headers[name].push(value);
+            } else {
+                headers[name] = [headers[name], value];
+            }
+        } else {
+
+            headers[name] = value;
+        }
+    });
+
+    return headers;
+}
+
+function Client (context) {
+
+    var reqHandlers = [sendRequest],
+        resHandlers = [],
+        handler;
+
+    if (!isObject(context)) {
+        context = null;
+    }
+
+    function Client(request) {
+        return new Promise$1(function (resolve) {
+
+            function exec() {
+
+                handler = reqHandlers.pop();
+
+                if (isFunction(handler)) {
+                    handler.call(context, request, next);
+                } else {
+                    warn('Invalid interceptor of type ' + typeof handler + ', must be a function');
+                    next();
+                }
+            }
+
+            function next(response) {
+
+                if (isFunction(response)) {
+
+                    resHandlers.unshift(response);
+                } else if (isObject(response)) {
+
+                    resHandlers.forEach(function (handler) {
+                        response = when(response, function (response) {
+                            return handler.call(context, response) || response;
+                        });
+                    });
+
+                    when(response, resolve);
+
+                    return;
+                }
+
+                exec();
+            }
+
+            exec();
+        }, context);
+    }
+
+    Client.use = function (handler) {
+        reqHandlers.push(handler);
+    };
+
+    return Client;
+}
+
+function sendRequest(request, resolve) {
+
+    var client = request.client || xhrClient;
+
+    resolve(client(request));
+}
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+/**
+ * HTTP Response.
+ */
+
+var Response = function () {
+    function Response(body, _ref) {
+        var url = _ref.url;
+        var headers = _ref.headers;
+        var status = _ref.status;
+        var statusText = _ref.statusText;
+        classCallCheck(this, Response);
+
+
+        this.url = url;
+        this.body = body;
+        this.headers = headers || {};
+        this.status = status || 0;
+        this.statusText = statusText || '';
+        this.ok = status >= 200 && status < 300;
+    }
+
+    Response.prototype.text = function text() {
+        return this.body;
+    };
+
+    Response.prototype.blob = function blob() {
+        return new Blob([this.body]);
+    };
+
+    Response.prototype.json = function json() {
+        return JSON.parse(this.body);
+    };
+
+    return Response;
+}();
+
+var Request = function () {
+    function Request(options) {
+        classCallCheck(this, Request);
+
+
+        this.method = 'GET';
+        this.body = null;
+        this.params = {};
+        this.headers = {};
+
+        assign(this, options);
+    }
+
+    Request.prototype.getUrl = function getUrl() {
+        return Url(this);
+    };
+
+    Request.prototype.getBody = function getBody() {
+        return this.body;
+    };
+
+    Request.prototype.respondWith = function respondWith(body, options) {
+        return new Response(body, assign(options || {}, { url: this.getUrl() }));
+    };
+
+    return Request;
+}();
+
+/**
+ * Service for sending network requests.
+ */
+
+var CUSTOM_HEADERS = { 'X-Requested-With': 'XMLHttpRequest' };
+var COMMON_HEADERS = { 'Accept': 'application/json, text/plain, */*' };
+var JSON_CONTENT_TYPE = { 'Content-Type': 'application/json;charset=utf-8' };
+
+function Http(options) {
+
+    var self = this || {},
+        client = Client(self.$vm);
+
+    defaults(options || {}, self.$options, Http.options);
+
+    Http.interceptors.forEach(function (handler) {
+        client.use(handler);
+    });
+
+    return client(new Request(options)).then(function (response) {
+
+        return response.ok ? response : Promise$1.reject(response);
+    }, function (response) {
+
+        if (response instanceof Error) {
+            error(response);
+        }
+
+        return Promise$1.reject(response);
+    });
+}
+
+Http.options = {};
+
+Http.headers = {
+    put: JSON_CONTENT_TYPE,
+    post: JSON_CONTENT_TYPE,
+    patch: JSON_CONTENT_TYPE,
+    delete: JSON_CONTENT_TYPE,
+    custom: CUSTOM_HEADERS,
+    common: COMMON_HEADERS
+};
+
+Http.interceptors = [before, timeout, method, body, jsonp, header, cors];
+
+['get', 'delete', 'head', 'jsonp'].forEach(function (method) {
+
+    Http[method] = function (url, options) {
+        return this(assign(options || {}, { url: url, method: method }));
+    };
+});
+
+['post', 'put', 'patch'].forEach(function (method) {
+
+    Http[method] = function (url, body, options) {
+        return this(assign(options || {}, { url: url, method: method, body: body }));
+    };
+});
+
+function Resource(url, params, actions, options) {
+
+    var self = this || {},
+        resource = {};
+
+    actions = assign({}, Resource.actions, actions);
+
+    each(actions, function (action, name) {
+
+        action = merge({ url: url, params: params || {} }, options, action);
+
+        resource[name] = function () {
+            return (self.$http || Http)(opts(action, arguments));
+        };
+    });
+
+    return resource;
+}
+
+function opts(action, args) {
+
+    var options = assign({}, action),
+        params = {},
+        body;
+
+    switch (args.length) {
+
+        case 2:
+
+            params = args[0];
+            body = args[1];
+
+            break;
+
+        case 1:
+
+            if (/^(POST|PUT|PATCH)$/i.test(options.method)) {
+                body = args[0];
+            } else {
+                params = args[0];
+            }
+
+            break;
+
+        case 0:
+
+            break;
+
+        default:
+
+            throw 'Expected up to 4 arguments [params, body], got ' + args.length + ' arguments';
+    }
+
+    options.body = body;
+    options.params = assign({}, options.params, params);
+
+    return options;
+}
+
+Resource.actions = {
+
+    get: { method: 'GET' },
+    save: { method: 'POST' },
+    query: { method: 'GET' },
+    update: { method: 'PUT' },
+    remove: { method: 'DELETE' },
+    delete: { method: 'DELETE' }
+
+};
+
+function plugin(Vue) {
+
+    if (plugin.installed) {
+        return;
+    }
+
+    Util(Vue);
+
+    Vue.url = Url;
+    Vue.http = Http;
+    Vue.resource = Resource;
+    Vue.Promise = Promise$1;
+
+    Object.defineProperties(Vue.prototype, {
+
+        $url: {
+            get: function () {
+                return options(Vue.url, this, this.$options.url);
+            }
+        },
+
+        $http: {
+            get: function () {
+                return options(Vue.http, this, this.$options.http);
+            }
+        },
+
+        $resource: {
+            get: function () {
+                return Vue.resource.bind(this);
+            }
+        },
+
+        $promise: {
+            get: function () {
+                var _this = this;
+
+                return function (executor) {
+                    return new Vue.Promise(executor, _this);
+                };
+            }
+        }
+
+    });
+}
+
+if (typeof window !== 'undefined' && window.Vue) {
+    window.Vue.use(plugin);
+}
+
+module.exports = plugin;
+},{}],42:[function(require,module,exports){
 /*!
  * vue-router v0.7.13
  * (c) 2016 Evan You
@@ -2773,7 +4797,7 @@ process.chdir = function (dir) {
   return Router;
 
 }));
-},{}],3:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 (function (process,global){
 /*!
  * Vue.js v1.0.26
@@ -12850,9 +14874,268 @@ setTimeout(function () {
 
 module.exports = Vue;
 }).call(this,require("b55mWE"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"b55mWE":1}],4:[function(require,module,exports){
-var Vue = require("vue");
-var VueRouter = require('vue-router')
+},{"b55mWE":39}],44:[function(require,module,exports){
+var inserted = exports.cache = {}
 
+exports.insert = function (css) {
+  if (inserted[css]) return
+  inserted[css] = true
+
+  var elem = document.createElement('style')
+  elem.setAttribute('type', 'text/css')
+
+  if ('textContent' in elem) {
+    elem.textContent = css
+  } else {
+    elem.styleSheet.cssText = css
+  }
+
+  document.getElementsByTagName('head')[0].appendChild(elem)
+  return elem
+}
+
+},{}],45:[function(require,module,exports){
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <h3>Epilogue</h3>\n    <p>\n        vue-js 上手方便，管理容易。有點類似 angular1，卻又比 angular1 更方便使用。適合作為前端資料處理等快速開發使用。\n    </p>\n    <div class=\"divider\"></div>\n    <h5>小檢討：</h5>\n    <ol>\n        <li>需要更加熟悉 ES5 與 ES6，避免在 import export 之間常出現錯誤。</li>\n        <li>ES6 語法在瀏覽器無法全部支援，未注意</li>\n        <li>不夠熟悉 Promise 機制</li>\n    </ol>\n    <div class=\"divider\"></div>\n    <h5>未來目標：</h5>\n    <p>使用 vue-loader、vue-resource、vue-router 等工具建構完整網站前端。</p>\n    <div class=\"divider\"></div>\n    <h5>參考資源</h5>\n    <ol>\n        <li>\n            <a href=\"https://vuejs.org\" target=\"_blank\">https://vuejs.org</a>\n        </li>\n        <li>\n            <a href=\"https://auth0.com/blog/2015/11/13/build-an-app-with-vuejs/\" target=\"_blank\">\n                Build an App with Vue.js: From Authentication to Calling an API\n            </a>\n        </li>\n    </ol>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-300eae79", module.exports)
+  } else {
+    hotAPI.update("_v-300eae79", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":43,"vue-hot-reload-api":40}],46:[function(require,module,exports){
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <h3>Vue-Router 練習</h3>\n    <ol>\n        <li>\n            參考資料\n            <a href=\"https://github.com/vuejs/vue-router\" target=\"_blank\">https://github.com/vuejs/vue-router</a>\n        </li>\n        <li>根據範例建立 services 資料夾，將 view 與 api 分開管理。</li>\n        <li>嘗試合併 vue-resource 失敗，改為單純使用 Promise 機制。</li>\n    </ol>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-4fc6893e", module.exports)
+  } else {
+    hotAPI.update("_v-4fc6893e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":43,"vue-hot-reload-api":40}],47:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n.cards > .col {\n    float: none;\n    max-width: 100%;\n    position: relative;\n    display: -webkit-box;\n    display: -webkit-flex;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n    -webkit-flex-direction: column;\n    -ms-flex-direction: column;\n    flex-direction: column;\n}\n.row.cards > .col {\n    margin-left: 0 !important;\n    left: 0 !important;\n    right: 0 !important;\n}\n.cards {\n    display: -webkit-box;\n    display: -webkit-flex;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-flex-wrap: wrap;\n    -ms-flex-wrap: wrap;\n    flex-wrap: wrap;\n}\n.card .card-content p {\n    color: #666;\n    font-weight: 300;\n}\n.card .card-content, \n.card .card-action {\n    padding: 10px 15px;\n}\n.card .card-image {\n    position: relative;\n    display: block;\n    padding-bottom: 100%;\n    overflow: hidden;\n}\n.card .card-image img {\n    position: absolute;\n    width: auto;\n    height: 100%;\n    left: -100%;\n    right: -100%;\n    margin: auto;\n}\n@media(max-width: 600px) {\n    .card .card-content > .card-title {\n        font-size: 1.5em;\n    }\n    .card .card-content > p {\n        font-size: 0.8em;\n    }\n}\n")
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getIterator2 = require("babel-runtime/core-js/get-iterator");
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var toolService = require('../../services/tool.js');
+
+exports.default = {
+    route: {
+        data: function data(transition) {
+            console.log(transition.to.params);
+            return toolService.get(this.setType(transition.to.params.category)).then(function (list) {
+                console.log(list);
+                return { list: list };
+            });
+        }
+    },
+    methods: {
+        setType: function setType(category) {
+            if (category == "design") return 1;
+            if (category == "frontend") return 2;
+            if (category == "backend") return 3;
+        },
+        getListById: function getListById() {
+            return this.$http.get('../api/tools.js', function (response, status, request) {
+                if (request.status == 200) resolve(response);else reject(Error(request.statusText));
+            });
+        },
+        setList: function setList() {
+            var _this = this;
+
+            var categoryList = [];
+            this.getListById().then(function (response) {
+                var list = response.json();
+                // let type = this.type;
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = (0, _getIterator3.default)(list), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var item = _step.value;
+
+                        if (item.category == _this.type) categoryList.push(item);
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+
+                return categoryList;
+            });
+        }
+    },
+    ready: function ready() {
+        console.log(this.list);
+        // this.$set("type", this.setType());
+        // this.setList();
+    },
+    data: function data() {
+        return {
+            list: [],
+            type: 1
+        };
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div>\n    <h3>{{ $route.params.category | uppercase }}</h3>\n    <div class=\"row cards\">\n        <div class=\"col s12 m6 l4\" v-for=\"item of list\">\n            <div class=\"card\">\n                <div class=\"card-image\">\n                    <img v-bind:src=\"item.cover\" alt=\"{{ item.title }}\">\n                </div>\n                <div class=\"card-content\">\n                    <div class=\"card-title\">\n                        {{ item.title }}\n                    </div>\n                    <p>{{ item.description }}</p>\n                </div>\n                <div class=\"card-action right-align\">\n                    <a href=\"{{ item.link }}\" target=\"_blank\">View</a>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n.cards > .col {\n    float: none;\n    max-width: 100%;\n    position: relative;\n    display: -webkit-box;\n    display: -webkit-flex;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n    -webkit-flex-direction: column;\n    -ms-flex-direction: column;\n    flex-direction: column;\n}\n.row.cards > .col {\n    margin-left: 0 !important;\n    left: 0 !important;\n    right: 0 !important;\n}\n.cards {\n    display: -webkit-box;\n    display: -webkit-flex;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-flex-wrap: wrap;\n    -ms-flex-wrap: wrap;\n    flex-wrap: wrap;\n}\n.card .card-content p {\n    color: #666;\n    font-weight: 300;\n}\n.card .card-content, \n.card .card-action {\n    padding: 10px 15px;\n}\n.card .card-image {\n    position: relative;\n    display: block;\n    padding-bottom: 100%;\n    overflow: hidden;\n}\n.card .card-image img {\n    position: absolute;\n    width: auto;\n    height: 100%;\n    left: -100%;\n    right: -100%;\n    margin: auto;\n}\n@media(max-width: 600px) {\n    .card .card-content > .card-title {\n        font-size: 1.5em;\n    }\n    .card .card-content > p {\n        font-size: 0.8em;\n    }\n}\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-22b852e2", module.exports)
+  } else {
+    hotAPI.update("_v-22b852e2", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"../../services/tool.js":51,"babel-runtime/core-js/get-iterator":1,"vue":43,"vue-hot-reload-api":40,"vueify/lib/insert-css":44}],48:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n.view {\n  -webkit-transition: all .5s ease;\n  transition: all .5s ease;\n}\n.test-enter, .test-leave {\n  opacity: 0;\n  -webkit-transform: translate3d(10px, 0, 0);\n          transform: translate3d(10px, 0, 0);\n}\n.collection a.collection-item.v-link-active {\n  background-color: #26a69a;\n  color: #eafaf9;\n}\n[v-cloak] {\n  display: none;\n}\n")
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    data: function data() {
+        return {
+            authenticating: false
+        };
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<p v-show=\"authenticating\" style=\"color:red\">Authenticating...</p>\n<div class=\"row section\">\n  <div class=\"col s12 m3\">\n    <div class=\"collection\">\n      <a v-link=\"{ path: '/vue-js/router/index' }\" class=\"collection-item\">Home</a>\n      <a v-link=\"{ path: '/vue-js/router/tools/design' }\" class=\"collection-item\">Design</a>\n      <a v-link=\"{ path: '/vue-js/router/tools/frontend' }\" class=\"collection-item\">Frontend</a>\n      <a v-link=\"{ path: '/vue-js/router/tools/backend' }\" class=\"collection-item\">Backend</a>\n      <a v-link=\"{ path: '/vue-js/router/epilogue' }\" class=\"collection-item\">Epilogue</a>\n    </div>\n  </div>\n  <div class=\"col s12 m9\">\n    <router-view class=\"view\" transition=\"test\" transition-mode=\"out-in\" keep-alive=\"\"></router-view>\n  </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n.view {\n  -webkit-transition: all .5s ease;\n  transition: all .5s ease;\n}\n.test-enter, .test-leave {\n  opacity: 0;\n  -webkit-transform: translate3d(10px, 0, 0);\n          transform: translate3d(10px, 0, 0);\n}\n.collection a.collection-item.v-link-active {\n  background-color: #26a69a;\n  color: #eafaf9;\n}\n[v-cloak] {\n  display: none;\n}\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-5bfabb06", module.exports)
+  } else {
+    hotAPI.update("_v-5bfabb06", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":43,"vue-hot-reload-api":40,"vueify/lib/insert-css":44}],49:[function(require,module,exports){
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"center-align\">\n    <h2 class=\"teal-text\">\n        <i class=\"large material-icons\">warning</i><br>\n        Page Not Found.<br>\n        <small class=\"grey-text\">查無此頁請再試一次</small>\n    </h2>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-fbb7e0fc", module.exports)
+  } else {
+    hotAPI.update("_v-fbb7e0fc", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":43,"vue-hot-reload-api":40}],50:[function(require,module,exports){
+var Vue = require('vue');
+var VueResource = require('vue-resource');
+var VueRouter = require('vue-router');
+
+// Components
+var Main = require('./components/router/main.vue');
+var Index = require('./components/router/index.vue');
+var About = require('./components/router/about.vue');
+var List = require('./components/router/list.vue');
+var Notfound = require('./components/router/not_found.vue');
+
+var App = Vue.extend(Main);
+
+Vue.use(VueResource);
 Vue.use(VueRouter);
-},{"vue":3,"vue-router":2}]},{},[4])
+
+var router = new VueRouter({
+  history: true,
+  saveScrollPosition: true
+});
+
+router.map({
+    '/vue-js/router/index': { component: Index },
+    '/vue-js/router/epilogue': { component: About },
+    '/vue-js/router/tools/:category': { component: List },
+    '*': { component: Notfound },
+});
+
+// router.on('/router/tools/:category', {
+//     component: List 
+// });
+
+// redirect
+router.redirect({
+    '/vue-js/router/': '/vue-js/router/index'
+});
+
+router.beforeEach(function(transition) {
+    if (transition.to.path === '/forbidden') {
+        router.app.authenticating = true;
+        setTimeout(function() {
+            router.app.authenticating = false;
+            alert('this route is forbidden by a global before hook');
+            transition.abort();
+        }, 3000)
+    } else {
+        transition.next()
+    }
+});
+
+router.start(App, '#router');
+
+// just for debugging
+window.router = router;
+
+},{"./components/router/about.vue":45,"./components/router/index.vue":46,"./components/router/list.vue":47,"./components/router/main.vue":48,"./components/router/not_found.vue":49,"vue":43,"vue-resource":41,"vue-router":42}],51:[function(require,module,exports){
+
+module.exports =  {
+    get (category_id) {
+        return new Promise(function (resolve, reject) {
+            $.get('/vue-js/api/tools.js', function(response, status, request) {
+                var data = JSON.parse(response);
+                var list = [];
+                for(var item of data) {
+                    if(item.category===category_id)
+                        list.push(item);
+                }
+                resolve(list); 
+            });
+        });
+        
+    }
+}
+
+},{}]},{},[50])
